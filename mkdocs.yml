@@ -5,19 +5,22 @@ site_description: Wiki AirCarto - Documentation et ressources
 theme:
   name: material
   language: fr
+  logo: assets/images/logo.png
+  favicon: assets/images/logo.png
   palette:
     - scheme: default
-      primary: teal
-      accent: teal
+      primary: white
+      accent: blue
       toggle:
         icon: material/brightness-7
         name: Mode sombre
     - scheme: slate
-      primary: teal
-      accent: teal
+      primary: white
+      accent: blue
       toggle:
         icon: material/brightness-4
         name: Mode clair
+  custom_dir: overrides
   features:
     - navigation.tabs
     - navigation.sections
@@ -25,6 +28,9 @@ theme:
     - search.suggest
     - search.highlight
     - content.code.copy
+
+extra_css:
+  - assets/stylesheets/custom.css
 
 plugins:
   - search:
@@ -47,3 +53,11 @@ markdown_extensions:
 
 nav:
   - Accueil: index.md
+  - ModuleAir:
+    - WiFi: moduleair-wifi/index.md
+    - Pro: moduleair-pro/index.md
+  - NebuleAir:
+    - WiFi: nebuleair-wifi/index.md
+    - Pro: nebuleair-pro/index.md
+  - Edu Kit: edukit/index.md
+  - MobileAir: mobileair/index.md
