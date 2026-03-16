@@ -2,6 +2,8 @@
 
 ![Logo NebuleAir Pro](https://aircarto.fr/images/nebuleair_pro/Logo_NebuleAirPro.png)
 
+![NebuleAir Pro](../assets/images/nebuleair_pro.jpg){ width="400" }
+
 ## Présentation
 
 Le NebuleAir Pro est la version professionnelle du capteur de qualité de l'air NebuleAir, conçu pour des déploiements en extérieur avec une connectivité cellulaire autonome.
@@ -34,6 +36,11 @@ Des capteurs supplémentaires peuvent être ajoutés pour étendre les capacité
 **Sonomètre** :
 
 - [NSRT mk4](https://convergenceinstruments.com/fr/produit/sonometre-enregistreur-avec-microphone-de-type-1-nsrt_mk4_dev/) (fabricant : Convergence Instruments) - sonomètre enregistreur avec microphone de type 1
+
+### Boîtier
+
+- **Dimensions** : 200 x 280 x 45 mm
+- Boîtier résistant aux intempéries, conçu pour une installation en extérieur
 
 ### Connectivité
 
