@@ -20,27 +20,65 @@ Il est équipé d'un modem 4G **u-blox SARA-R500** qui communique sur les bandes
 
 | Capteur | Mesure | Paramètres |
 |---------|--------|------------|
-| **NextPM** (Tera Sensor) | Particules fines | PM1, PM2.5, PM10 |
+| **[NextPM](https://tera-sensor.com/nextpm/)** (Tera Sensor) | Particules fines | PM1, PM2.5, PM10 |
 | **BME280** (Bosch) | Environnement | Température, humidité, pression atmosphérique |
+
+![NextPM](../assets/images/NPM_photo.jpg){ width="300" }
 
 ### Capteurs optionnels
 
 Des capteurs supplémentaires peuvent être ajoutés pour étendre les capacités de mesure :
 
-**Sondes gaz Cairsens** (fabricant : [Envea](https://www.envea.global/)) :
+**Sondes gaz Cairsens®** (fabricant : [Envea](https://www.envea.global/)) :
+
+![Cairsens® Envea](../assets/images/cairSens_envea.png){ width="400" }
 
 - NO2 (dioxyde d'azote)
 - O3 (ozone)
-- Autres gaz selon les modèles Cairsens disponibles
+- Autres gaz selon les modèles Cairsens® disponibles
 
 **Sonomètre** :
 
 - [NSRT mk4](https://convergenceinstruments.com/fr/produit/sonometre-enregistreur-avec-microphone-de-type-1-nsrt_mk4_dev/) (fabricant : Convergence Instruments) - sonomètre enregistreur avec microphone de type 1
 
+![NSRT mk4](../assets/images/capteurBruit.png){ width="200" }
+
 ### Boîtier
 
-- **Dimensions** : 200 x 280 x 45 mm
+- **Boîtier principal** : Takachi WP15-21-6G — **150 x 210 x 55 mm**
+
+![Boîtier Takachi WP15-21-6G](../assets/images/boitierTakachi.png){ width="400" }
+- **Pièces complémentaires** : éléments imprimés en 3D (PETG) ajoutés sur les côtés et sur le bas de l'appareil
 - Boîtier résistant aux intempéries, conçu pour une installation en extérieur
+
+### Fichiers 3D
+
+#### AirVent
+
+Système de ventilation permettant la circulation de l'air entre l'extérieur et l'intérieur du boîtier. Ces pièces sont fixées sur les côtés de l'appareil.
+
+![AirVent](../assets/images/air_vent.png){ width="400" }
+![AirVent - vue en coupe](../assets/images/air_vent_coupe.png){ width="400" }
+
+[:material-download: Télécharger le fichier STEP](../assets/3d_files/AirVent_nebuleair_pro.step){ .md-button }
+
+#### Cairsens® AirVent
+
+Pièces positionnées en face des sondes Cairsens® Envea pour permettre la circulation de l'air nécessaire à la mesure des gaz.
+
+![Cairsens® AirVent](../assets/images/cairSens_airVent.png){ width="400" }
+![Cairsens® AirVent - vue en coupe](../assets/images/cairSens_airVent_coupe.png){ width="400" }
+
+[:material-download: Télécharger le fichier STEP](../assets/3d_files/AttachesEnvea.step){ .md-button }
+
+#### BME AirVent
+
+Système d'aération positionné en face de la sonde de température et d'humidité BME280, permettant une mesure fiable des conditions environnementales.
+
+![BME AirVent](../assets/images/BME_airVent.png){ width="400" }
+![BME AirVent - vue en coupe](../assets/images/BME_airVent_coupe.png){ width="400" }
+
+[:material-download: Télécharger le fichier STEP](../assets/3d_files/BME_airvent.step){ .md-button }
 
 ### Connectivité
 
