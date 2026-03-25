@@ -48,42 +48,19 @@ Des capteurs supplémentaires peuvent être ajoutés pour étendre les capacité
 - **Boîtier principal** : Takachi WP15-21-6G — **150 x 210 x 55 mm**
 
 ![Boîtier Takachi WP15-21-6G](../assets/images/boitierTakachi.png){ width="400" }
+
+![Boîtier NebuleAir Pro ouvert](../assets/images/nebuleair_pro_inside.png){ width="400" }
+
 - **Pièces complémentaires** : éléments imprimés en 3D (PETG) ajoutés sur les côtés et sur le bas de l'appareil
 - Boîtier résistant aux intempéries, conçu pour une installation en extérieur
 
-### Fichiers 3D
-
-#### AirVent
-
-Système de ventilation permettant la circulation de l'air entre l'extérieur et l'intérieur du boîtier. Ces pièces sont fixées sur les côtés de l'appareil.
-
-![AirVent](../assets/images/air_vent.png){ width="400" }
-![AirVent - vue en coupe](../assets/images/air_vent_coupe.png){ width="400" }
-
-[:material-download: Télécharger le fichier STEP](../assets/3d_files/AirVent_nebuleair_pro.step){ .md-button }
-
-#### Cairsens® AirVent
-
-Pièces positionnées en face des sondes Cairsens® Envea pour permettre la circulation de l'air nécessaire à la mesure des gaz.
-
-![Cairsens® AirVent](../assets/images/cairSens_airVent.png){ width="400" }
-![Cairsens® AirVent - vue en coupe](../assets/images/cairSens_airVent_coupe.png){ width="400" }
-
-[:material-download: Télécharger le fichier STEP](../assets/3d_files/AttachesEnvea.step){ .md-button }
-
-#### BME AirVent
-
-Système d'aération positionné en face de la sonde de température et d'humidité BME280, permettant une mesure fiable des conditions environnementales.
-
-![BME AirVent](../assets/images/BME_airVent.png){ width="400" }
-![BME AirVent - vue en coupe](../assets/images/BME_airVent_coupe.png){ width="400" }
-
-[:material-download: Télécharger le fichier STEP](../assets/3d_files/BME_airvent.step){ .md-button }
-
 ### Connectivité
 
-- **Modem** : u-blox SARA-R500
-- **Protocole** : NB-IoT (Narrowband IoT)
+Le NebuleAir Pro communique sur le réseau **Narrowband IoT** (NB-IoT) à l'aide du module **SARA-R500** de chez **u-blox**. La communication avec le module s'effectue par **requêtes AT**.
+
+Sur le PCB, on retrouve le connecteur pour l'antenne ainsi qu'un slot pour une carte SIM.
+
+![PCB module SARA-R5 u-blox](../assets/images/SARA_R5_PCB.png){ width="400" }
 
 ### Alimentation
 
@@ -91,6 +68,38 @@ Le NebuleAir Pro peut être alimenté de deux manières :
 
 - **Secteur** : alimentation filaire classique
 - **Autonome** : pack batterie + panneau solaire
+
+### Horloge interne (RTC)
+
+Le Raspberry Pi n'étant pas équipé d'une horloge interne, un module **RTC** (Real Time Clock) basé sur le **DS3231** est intégré dans le boîtier afin de conserver l'heure même lorsque le capteur est hors tension.
+
+Il existe deux versions du module RTC :
+
+#### Version 1 — pile CR2032 amovible
+
+Cette version utilise une pile bouton CR2032 facilement remplaçable.
+
+![Module RTC v1 — face avant](../assets/images/rtc_v1_front.jpg){ width="300" }
+![Module RTC v1 — face arrière](../assets/images/rtc_v1_back.jpg){ width="300" }
+
+#### Version 2 — pile soudée
+
+Cette version utilise une petite pile directement soudée sur le module. On retrouve **exclusivement** cette version sur les modèles à partir du **nebuleair-pro150**.
+
+![Module RTC v2 — face avant](../assets/images/rtc_2_front.png){ width="300" }
+![Module RTC v2 — face arrière](../assets/images/rtc_v2_back.png){ width="300" }
+
+!!! info "Connecteur identique"
+    Les deux versions utilisent le même connecteur. En cas de défaillance de la pile, il est donc facile de remplacer le module par l'une ou l'autre version.
+
+!!! warning "Remise à l'heure"
+    Après un changement de module RTC, il est nécessaire de remettre l'horloge à l'heure depuis la page **Admin** de l'interface web de configuration.
+
+### Firmware
+
+Le firmware du NebuleAir Pro est **open source**. Le code source est disponible sur le dépôt Gitea suivant :
+
+[:material-git: Dépôt Gitea — nebuleair_pro_4g](http://gitea.aircarto.fr/PaulVua/nebuleair_pro_4g){ .md-button }
 
 ## Installation
 
@@ -115,14 +124,65 @@ L'installation du NebuleAir Pro est simple :
 
 Aucune configuration n'est nécessaire au démarrage. L'appareil est pré-configuré en usine et se connecte automatiquement au réseau mobile.
 
+### WiFi et mode Hotspot
+
+Le NebuleAir Pro est équipé d'une puce WiFi intégrée. Au démarrage, l'appareil vérifie s'il est connecté à un réseau WiFi connu. Si aucun réseau n'est disponible, il se met automatiquement en **mode Hotspot** (point d'accès) et crée un réseau WiFi local.
+
+#### Se connecter au Hotspot
+
+1. Recherchez le réseau WiFi **`nebuleair-proXXX`** (où `XXX` correspond au numéro de votre capteur) dans la liste des réseaux disponibles sur votre téléphone ou ordinateur
+2. Connectez-vous en entrant le mot de passe : **`nebuleaircfg`**
+3. Une fois connecté, ouvrez votre navigateur et accédez à la page de configuration à l'adresse :
+    - [http://aircarto.local](http://aircarto.local) (via mDNS)
+    - ou directement via l'adresse IP : **`192.168.4.1`**
+
+#### Connecter le NebuleAir Pro à un réseau WiFi
+
+Depuis la page de configuration, rendez-vous dans la section **WiFi** pour connecter le capteur à un réseau WiFi local. La liste des réseaux disponibles est affichée (le scan est effectué automatiquement au démarrage, avant l'activation du Hotspot).
+
+Une fois connecté à un réseau WiFi, le Hotspot se désactive et le capteur utilise la connexion WiFi pour transmettre les données en complément de la liaison NB-IoT.
+
+!!! note "Scan WiFi"
+    La liste des réseaux WiFi disponibles est scannée au démarrage de l'appareil, avant l'activation du mode Hotspot. Si vous ne voyez pas votre réseau dans la liste, redémarrez le capteur.
+
+## Mise à jour du firmware
+
+Le firmware du NebuleAir Pro peut être mis à jour de deux manières :
+
+### 1. Mise à jour manuelle (hors ligne)
+
+!!! warning "Version minimale requise"
+    La mise à jour manuelle hors ligne est disponible à partir de la **version 1.4.6** du firmware.
+
+1. Téléchargez la dernière version du firmware depuis la [page des releases](http://gitea.aircarto.fr/PaulVua/nebuleair_pro_4g/releases)
+2. Connectez-vous au capteur via le **mode Hotspot** (voir [WiFi et mode Hotspot](#wifi-et-mode-hotspot))
+3. Accédez à la page **Admin** depuis l'interface de configuration
+4. Glissez-déposez le fichier du firmware téléchargé sur la zone prévue à cet effet
+
+### 2. Mise à jour en ligne (via WiFi)
+
+1. Connectez le capteur à un réseau WiFi disposant d'un accès internet (voir [Connecter le NebuleAir Pro à un réseau WiFi](#connecter-le-nebuleair-pro-a-un-reseau-wifi))
+2. Accédez à la page **Admin** depuis l'interface de configuration
+3. Cliquez sur le bouton **Update** pour lancer la mise à jour automatique depuis le dépôt
+
 ## Récupération des données
 
-Il existe deux moyens d'accéder aux données de votre capteur NebuleAir Pro.
+Il existe trois moyens d'accéder aux données de votre capteur NebuleAir Pro.
+
+### 1. Base de données locale
+
+Le NebuleAir Pro enregistre l'ensemble des mesures sur sa mémoire locale dans une base de données SQLite. Il est possible de consulter et télécharger ces données en se connectant directement au capteur.
+
+!!! info "Usage recommandé"
+    En fonctionnement normal, les données sont transmises automatiquement via le modem 4G (NB-IoT) et sont accessibles depuis l'[interface MonNebuleAir](#2-interface-web-monnebuleair) ou l'[API AirCarto](#3-api-aircarto). La récupération locale est utile en cas de panne du réseau 4G ou du modem, pour s'assurer qu'aucune donnée n'est perdue.
+
+1. Connectez-vous au capteur via le **mode Hotspot** ou en étant sur le même réseau WiFi (voir [WiFi et mode Hotspot](#wifi-et-mode-hotspot))
+2. Accédez à la page **Database** depuis l'interface de configuration à l'adresse `192.168.4.1` (ou `aircarto.local`)
 
 !!! tip "Informations nécessaires"
     Le **nom du capteur** et le **token** sont inscrits sur le bon de livraison fourni avec votre capteur. Conservez-le précieusement.
 
-### 1. Interface web MonNebuleAir
+### 2. Interface web MonNebuleAir
 
 Rendez-vous sur [https://nebuleair.fr/monNebuleAir.html](https://nebuleair.fr/monNebuleAir.html) et renseignez :
 
@@ -135,7 +195,7 @@ Vous accéderez directement à la visualisation de vos données sous forme de gr
 
 ![Interface de visualisation des données MonNebuleAir](../assets/images/Mon NebuleAir data.png)
 
-### 2. API AirCarto
+### 3. API AirCarto
 
 Pour une récupération programmatique des données (intégration dans vos propres outils, export, etc.), utilisez l'API AirCarto :
 
@@ -233,3 +293,58 @@ https://api.aircarto.fr/capteurs/dataNebuleAir?capteurID=nebuleair-pro142&start=
 | `PRESS` | Pression atmosphérique | hPa |
 | `NOISE` | Niveau sonore (si disponible) | dB |
 | `COV` | Composés organiques volatils (si disponible) | ppb |
+
+## Fichiers 3D
+
+### Boîtier complet
+
+Fichier 3D reprenant l'ensemble du boîtier du NebuleAir Pro avec toutes les pièces assemblées.
+
+![NebuleAir Pro — vue 3D](../assets/3d_files/nebuleair_pro3D.png){ width="400" }
+
+[:material-download: Télécharger le fichier STEP](../assets/3d_files/NebuleAir Pro.step){ .md-button }
+
+### AirVent
+
+Système de ventilation permettant la circulation de l'air entre l'extérieur et l'intérieur du boîtier. Ces pièces sont fixées sur les côtés de l'appareil.
+
+![AirVent](../assets/images/air_vent.png){ width="400" }
+![AirVent - vue en coupe](../assets/images/air_vent_coupe.png){ width="400" }
+
+[:material-download: Télécharger le fichier STEP](../assets/3d_files/AirVent_nebuleair_pro.step){ .md-button }
+
+### Cairsens® AirVent
+
+Pièces positionnées en face des sondes Cairsens® Envea pour permettre la circulation de l'air nécessaire à la mesure des gaz.
+
+![Cairsens® AirVent](../assets/images/cairSens_airVent.png){ width="400" }
+![Cairsens® AirVent - vue en coupe](../assets/images/cairSens_airVent_coupe.png){ width="400" }
+
+[:material-download: Télécharger le fichier STEP](../assets/3d_files/AttachesEnvea.step){ .md-button }
+
+### Attaches Cairsens®
+
+Système d'attache interne permettant de maintenir les sondes Cairsens® en place à l'intérieur du boîtier. Il se compose de deux pièces : une partie basse (down) qui accueille les sondes et une partie haute (up) qui vient les bloquer.
+
+![Attaches Cairsens® Envea](../assets/images/attachesEnvea.png){ width="400" }
+
+[:material-download: Télécharger attache_envea_down (STEP)](../assets/3d_files/attache_envea_down.step){ .md-button }
+[:material-download: Télécharger attache_envea_up (STEP)](../assets/3d_files/attache_envea_up.step){ .md-button }
+
+### BME AirVent
+
+Système d'aération positionné en face de la sonde de température et d'humidité BME280, permettant une mesure fiable des conditions environnementales.
+
+![BME AirVent](../assets/images/BME_airVent.png){ width="400" }
+![BME AirVent - vue en coupe](../assets/images/BME_airVent_coupe.png){ width="400" }
+
+[:material-download: Télécharger le fichier STEP](../assets/3d_files/BME_airvent.step){ .md-button }
+
+### Attaches PCB
+
+Pièces permettant de fixer les PCB (CM4 et SARA) sur le fond du boîtier. L'attache est collée au fond du boîtier et les PCB se vissent dessus à l'aide de vis M3 (longueur 4 ou 6 mm).
+
+![Attaches PCB](../assets/images/attaches_PCB.png){ width="400" }
+
+[:material-download: Télécharger attachesCM4 (STEP)](../assets/3d_files/attachesCM4.step){ .md-button }
+[:material-download: Télécharger attachesSARA (STEP)](../assets/3d_files/attachesSARA.step){ .md-button }
