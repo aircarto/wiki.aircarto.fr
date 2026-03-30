@@ -12,6 +12,8 @@ Il est équipé d'un modem 4G **u-blox SARA-R500** qui communique sur les bandes
 
 ## Caractéristiques techniques
 
+![Schéma carte AirCarto](../assets/images/aircarto_carrier_final.svg){ width="600" }
+
 ### Plateforme
 
 - **Carte mère** : Raspberry Pi Compute Module 4 (CM4)
