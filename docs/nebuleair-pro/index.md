@@ -2,7 +2,7 @@
 
 ![Logo NebuleAir Pro](https://aircarto.fr/images/nebuleair_pro/Logo_NebuleAirPro.png)
 
-![NebuleAir Pro](../assets/images/nebuleair_pro.jpg){ width="400" }
+![NebuleAir Pro](../assets/images/nebuleair_pro.jpg){ width="100%" }
 
 ## Présentation
 
@@ -12,7 +12,7 @@ Il est équipé d'un modem 4G **u-blox SARA-R500** qui communique sur les bandes
 
 ## Caractéristiques techniques
 
-![Schéma carte AirCarto](../assets/images/aircarto_carrier_final.svg){ width="600" }
+![Schéma carte AirCarto](../assets/images/aircarto_carrier_final.svg){ width="100%" }
 
 ### Plateforme
 
