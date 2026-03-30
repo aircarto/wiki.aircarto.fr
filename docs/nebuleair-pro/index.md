@@ -80,6 +80,8 @@ En version **PM uniquement** (sans capteurs optionnels), le NebuleAir Pro consom
 | SARA-R5 (u-blox) | ~40 mA |
 | LEDs et divers | le reste |
 
+![Consommation électrique du NebuleAir Pro (Otii)](../assets/images/conso_electriqueNebuleAirPro4G.png){ width="700" }
+
 !!! note "Valeurs indicatives"
     Ces valeurs sont des moyennes observées en fonctionnement normal. La consommation peut varier ponctuellement, notamment lors des phases de transmission du modem.
 
