@@ -69,6 +69,23 @@ Le NebuleAir Pro peut être alimenté de deux manières :
 - **Secteur** : alimentation filaire classique
 - **Autonome** : pack batterie + panneau solaire
 
+### Consommation électrique
+
+En version **PM uniquement** (sans capteurs optionnels), le NebuleAir Pro consomme en moyenne **350 mA sous 5V**, soit environ **1.75 W**.
+
+| Composant | Consommation moyenne |
+|-----------|---------------------|
+| Raspberry Pi CM4 | ~250 mA |
+| NextPM (Tera Sensor) | ~80 mA |
+| SARA-R5 (u-blox) | ~40 mA |
+| LEDs et divers | le reste |
+
+!!! note "Valeurs indicatives"
+    Ces valeurs sont des moyennes observées en fonctionnement normal. La consommation peut varier ponctuellement, notamment lors des phases de transmission du modem.
+
+!!! warning "Pics de consommation"
+    La consommation peut atteindre jusqu'à **1 A** lors de certains pics, notamment au démarrage de l'appareil. L'alimentation utilisée doit être dimensionnée en conséquence.
+
 ### Horloge interne (RTC)
 
 Le Raspberry Pi n'étant pas équipé d'une horloge interne, un module **RTC** (Real Time Clock) basé sur le **DS3231** est intégré dans le boîtier afin de conserver l'heure même lorsque le capteur est hors tension.
