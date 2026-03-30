@@ -71,6 +71,8 @@ Le NebuleAir Pro peut être alimenté de deux manières :
 
 ### Consommation électrique
 
+![Consommation moyenne 350 mA](../assets/images/350mA_minimal.svg){ width="400" }
+
 En version **PM uniquement** (sans capteurs optionnels), le NebuleAir Pro consomme en moyenne **350 mA sous 5V**, soit environ **1.75 W**.
 
 | Composant | Consommation moyenne |
