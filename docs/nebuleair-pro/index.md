@@ -12,7 +12,7 @@ Il est équipé d'un modem 4G **u-blox SARA-R500** qui communique sur les bandes
 
 ## Caractéristiques techniques
 
-![Schéma carte AirCarto](../assets/images/aircarto_carrier_label_contrast.svg){ width="100%" }
+![Schéma carte AirCarto](../assets/images/aircarto_carrier_text_fix.svg){ width="100%" }
 
 ### Plateforme
 
