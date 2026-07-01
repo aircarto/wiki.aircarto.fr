@@ -58,3 +58,27 @@ Utilisez deux colliers de serrage sur les attaches latérales (haut droit et hau
 Utilisez deux colliers de serrage sur les attaches centrales.
 
 ![Fixation verticale](https://nebuleair.fr/img/nebuleAirFixation_verticale.jpg)
+
+## Entretien et dépannage
+
+![Sonde PM encrassée](../assets/images/NEXTPM_dust01.jpg)
+
+### Mesures PM anormalement élevées
+
+Si le capteur délivre des mesures de particules fines (PM) anormalement élevées — par exemple des pics à plus de 1000 µg/m³, ou des valeurs qui plafonnent très haut — il s'agit très probablement d'un **encrassement trop important de la sonde PM** qui vient altérer la mesure.
+
+!!! warning "Un encrassement fausse la mesure"
+    De la poussière, des insectes ou des toiles d'araignée à l'intérieur du capteur perturbent la mesure optique des particules et provoquent des valeurs erronées, sans rapport avec la qualité de l'air réelle.
+
+Pour y remédier, **ouvrez le capteur** et procédez au nettoyage :
+
+1. **Retirez tous les corps étrangers** : insectes, toiles d'araignée et grosses poussières présents à l'intérieur du boîtier et autour de la sonde.
+
+    ![Retrait des corps étrangers](../assets/images/NEXTPM_dust_1.jpg)
+
+2. **Nettoyez la grille en toile** avec les mains ou avec un chiffon. Vous pouvez également la passer sous l'eau, puis la laisser bien sécher avant de la remettre en place.
+
+    ![Nettoyage de la grille en toile](../assets/images/NextPMdust3.jpg)
+3. **Signalez les mesures erronées sur [Mon NebuleAir](https://nebuleair.fr/monNebuleAir.html)** : indiquez que les mesures concernées proviennent d'un dysfonctionnement du capteur et non d'une mesure effective de la qualité de l'air.
+
+    ![Signalement d'un défaut capteur sur Mon NebuleAir](../assets/images/context_defautCapteur.png)
