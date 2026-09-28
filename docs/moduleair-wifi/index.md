@@ -522,6 +522,150 @@ Le capteur est identifié par son **Device ID** (`AABBCCDDEEFF`), dérivé de l'
 
     **`device_status`** — bitmask d'état : bit 1 (`0x02`) = WiFi connecté ; bit 7 (`0x80`) = démarrage récent (uptime < 5 min).
 
+## Intégration à Home Assistant
+
+Le ModuleAir peut remonter ses mesures dans [Home Assistant](https://www.home-assistant.io/) **directement sur le réseau local**, sans passer par le cloud : les données restent disponibles même sans accès internet, et aucun compte ni token n'est nécessaire.
+
+!!! info "Version minimale"
+    La lecture locale est disponible à partir du firmware **0.4.0**. Pour connaître la version de votre capteur, consultez le dashboard ou le champ `software_version` décrit ci-dessous. Si besoin, faites d'abord une [mise à jour OTA](#mise-a-jour-du-firmware-ota).
+
+### L'API locale `/data.json`
+
+Le capteur expose ses dernières mesures à l'adresse :
+
+```
+http://<adresse-ip-du-capteur>/data.json
+```
+
+Les valeurs sont les **moyennes sur 60 secondes**, identiques à celles envoyées aux serveurs AirCarto. Elles sont renouvelées une fois par minute : interroger le capteur plus souvent n'apporte rien.
+
+??? example "Exemple de réponse"
+
+    ```json
+    {
+      "software_version": "0.6.1",
+      "age": "12",
+      "sensordatavalues": [
+        {"value_type": "NPM_P0", "value": "3.2"},
+        {"value_type": "NPM_P1", "value": "7.8"},
+        {"value_type": "NPM_P2", "value": "5.1"},
+        {"value_type": "BME280_temperature", "value": "22.3"},
+        {"value_type": "BME280_humidity", "value": "45.2"},
+        {"value_type": "BME280_pressure", "value": "101350.0"},
+        {"value_type": "MHZ19_CO2", "value": "612"},
+        {"value_type": "signal", "value": "-52"}
+      ]
+    }
+    ```
+
+| Mesure | `value_type` | Unité |
+|--------|--------------|-------|
+| PM1.0 | `NPM_P0` | µg/m³ |
+| PM10 | `NPM_P1` | µg/m³ |
+| PM2.5 | `NPM_P2` | µg/m³ |
+| CO₂ | `MHZ19_CO2` | ppm |
+| Température | `BME280_temperature` | °C |
+| Humidité | `BME280_humidity` | % |
+| Pression | `BME280_pressure` | **Pa** |
+| Signal WiFi | `signal` | dBm |
+
+!!! warning "Attention aux noms de champs"
+    Le format reprend la convention *sensor.community* : **`NPM_P1` correspond aux PM10** et **`NPM_P2` aux PM2.5**. La clé CO₂ est toujours `MHZ19_CO2`, que la sonde soit une MH-Z19C ou une Senseair S88. La pression est exprimée en **pascals** (et non en hPa). Comme pour l'envoi cloud, une mesure est **absente** de la liste si le capteur correspondant n'est pas installé ou est en erreur.
+
+`age` indique le nombre de secondes écoulées depuis la dernière mise à jour des mesures.
+
+### Configuration de Home Assistant
+
+1. **Fixez l'adresse IP du capteur** : dans l'interface de votre box ou de votre routeur, réservez une adresse IP (bail DHCP statique) pour le ModuleAir.
+2. **Ajoutez la configuration** ci-dessous à votre fichier `configuration.yaml`, en remplaçant `192.168.1.50` par l'adresse IP du capteur.
+3. **Redémarrez Home Assistant** : les capteurs apparaissent dans *Paramètres → Appareils et services → Entités*.
+
+!!! note "Utilisez l'adresse IP, pas `moduleair.local`"
+    Tous les ModuleAir répondent au même nom `moduleair.local`. Si vous en avez plusieurs sur le même réseau, ce nom peut désigner n'importe lequel d'entre eux : utilisez toujours l'**adresse IP** dans Home Assistant.
+
+??? example "Configuration `configuration.yaml` complète"
+
+    ```yaml
+    rest:
+      - resource: http://192.168.1.50/data.json
+        scan_interval: 60
+        timeout: 30
+        sensor:
+          - name: "ModuleAir PM1"
+            unique_id: moduleair_pm1
+            unit_of_measurement: "µg/m³"
+            device_class: pm1
+            state_class: measurement
+            value_template: >
+              {{ value_json.sensordatavalues | selectattr('value_type', 'eq', 'NPM_P0')
+                 | map(attribute='value') | first | default(none) }}
+          - name: "ModuleAir PM2.5"
+            unique_id: moduleair_pm25
+            unit_of_measurement: "µg/m³"
+            device_class: pm25
+            state_class: measurement
+            value_template: >
+              {{ value_json.sensordatavalues | selectattr('value_type', 'eq', 'NPM_P2')
+                 | map(attribute='value') | first | default(none) }}
+          - name: "ModuleAir PM10"
+            unique_id: moduleair_pm10
+            unit_of_measurement: "µg/m³"
+            device_class: pm10
+            state_class: measurement
+            value_template: >
+              {{ value_json.sensordatavalues | selectattr('value_type', 'eq', 'NPM_P1')
+                 | map(attribute='value') | first | default(none) }}
+          - name: "ModuleAir CO2"
+            unique_id: moduleair_co2
+            unit_of_measurement: "ppm"
+            device_class: carbon_dioxide
+            state_class: measurement
+            value_template: >
+              {{ value_json.sensordatavalues | selectattr('value_type', 'eq', 'MHZ19_CO2')
+                 | map(attribute='value') | first | default(none) }}
+          # Sonde optionnelle BME280
+          - name: "ModuleAir Température"
+            unique_id: moduleair_temperature
+            unit_of_measurement: "°C"
+            device_class: temperature
+            state_class: measurement
+            value_template: >
+              {{ value_json.sensordatavalues | selectattr('value_type', 'eq', 'BME280_temperature')
+                 | map(attribute='value') | first | default(none) }}
+          - name: "ModuleAir Humidité"
+            unique_id: moduleair_humidity
+            unit_of_measurement: "%"
+            device_class: humidity
+            state_class: measurement
+            value_template: >
+              {{ value_json.sensordatavalues | selectattr('value_type', 'eq', 'BME280_humidity')
+                 | map(attribute='value') | first | default(none) }}
+          - name: "ModuleAir Pression"
+            unique_id: moduleair_pressure
+            unit_of_measurement: "hPa"
+            device_class: atmospheric_pressure
+            state_class: measurement
+            value_template: >
+              {% set p = value_json.sensordatavalues | selectattr('value_type', 'eq', 'BME280_pressure')
+                 | map(attribute='value') | first | default(none) %}
+              {{ (p | float / 100) | round(1) if p is not none else none }}
+          - name: "ModuleAir Signal WiFi"
+            unique_id: moduleair_signal
+            unit_of_measurement: "dBm"
+            device_class: signal_strength
+            state_class: measurement
+            entity_category: diagnostic
+            value_template: >
+              {{ value_json.sensordatavalues | selectattr('value_type', 'eq', 'signal')
+                 | map(attribute='value') | first | default(none) }}
+    ```
+
+    Supprimez les capteurs que votre ModuleAir ne possède pas (par exemple la sonde BME280 si elle n'est pas installée). Pour **plusieurs ModuleAir**, dupliquez le bloc `- resource: …` avec l'adresse IP de chaque capteur, et adaptez les `name` et `unique_id` pour qu'ils restent uniques.
+
+!!! tip "Bonnes pratiques"
+    - Gardez `scan_interval: 60` : les mesures ne changent qu'une fois par minute, et le capteur répond aux requêtes une par une.
+    - Gardez `timeout: 30` : pendant l'envoi de ses données vers les serveurs AirCarto, le capteur peut mettre quelques secondes à répondre. Avec un délai trop court, Home Assistant affiche ponctuellement le capteur comme « indisponible ».
+
 ## Fichiers 3D
 
 Le boîtier du ModuleAir est imprimable en 3D. Le fichier du corps principal est disponible au téléchargement (format STL, prêt à imprimer).
