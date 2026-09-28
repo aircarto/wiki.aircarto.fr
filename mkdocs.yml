@@ -30,7 +30,7 @@ theme:
     - content.code.copy
 
 extra_css:
-  - assets/stylesheets/custom.css
+  - assets/stylesheets/custom.css?v=2
 
 plugins:
   - search:
@@ -60,6 +60,7 @@ nav:
     - WiFi: moduleair-wifi/index.md
     - Pro: moduleair-pro/index.md
     - Light: moduleair-light/index.md
+    - Mini: moduleair-mini/index.md
   - NebuleAir:
     - WiFi: nebuleair-wifi/index.md
     - Pro: nebuleair-pro/index.md

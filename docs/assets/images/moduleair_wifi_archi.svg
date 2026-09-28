@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 460" font-family="system-ui,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="880" height="460" rx="16" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#5b6b7b"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Capteurs de série (colonne gauche) ===== -->
+  <text x="30" y="40" font-size="11" font-weight="700" fill="#90a4ae" letter-spacing="0.5">DE SÉRIE</text>
+
+  <!-- NextPM -->
+  <rect x="28" y="52" width="214" height="58" rx="10" fill="#eef4fb" stroke="#1565c0" stroke-width="1.6"/>
+  <text x="44" y="77" font-size="16" font-weight="700" fill="#1565c0">NextPM</text>
+  <text x="44" y="97" font-size="12.5" fill="#37474f">Particules fines · PM1/2.5/10</text>
+  <text x="230" y="77" font-size="10.5" fill="#90a4ae" text-anchor="end">UART</text>
+
+  <!-- Senseair S88 -->
+  <rect x="28" y="124" width="214" height="58" rx="10" fill="#eef4fb" stroke="#1565c0" stroke-width="1.6"/>
+  <text x="44" y="149" font-size="16" font-weight="700" fill="#1565c0">Senseair S88</text>
+  <text x="44" y="169" font-size="12.5" fill="#37474f">Dioxyde de carbone · CO₂</text>
+  <text x="230" y="149" font-size="10.5" fill="#90a4ae" text-anchor="end">UART</text>
+
+  <!-- ===== Capteur optionnel ===== -->
+  <text x="30" y="222" font-size="11" font-weight="700" fill="#b0883a" letter-spacing="0.5">EN OPTION · DÉPORTÉ</text>
+
+  <!-- BME280 (option, dashed) -->
+  <rect x="28" y="234" width="214" height="58" rx="10" fill="#fdf6ea" stroke="#c8922e" stroke-width="1.6" stroke-dasharray="6 4"/>
+  <text x="44" y="259" font-size="16" font-weight="700" fill="#a9731f">BME280</text>
+  <text x="44" y="279" font-size="12.5" fill="#5b4a2a">Température · Humidité · Pression</text>
+  <text x="230" y="259" font-size="10.5" fill="#c0a060" text-anchor="end">I²C</text>
+
+  <!-- liaisons capteurs -> ESP32 -->
+  <path d="M242,80  C300,80 305,196 350,206" fill="none" stroke="#5b6b7b" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M242,153 L350,214" fill="none" stroke="#5b6b7b" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M242,263 C300,263 308,232 350,224" fill="none" stroke="#c8922e" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+
+  <!-- ===== ESP32 (centre) ===== -->
+  <rect x="352" y="160" width="176" height="110" rx="12" fill="#1565c0"/>
+  <text x="440" y="203" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">ESP32</text>
+  <text x="440" y="225" font-size="12.5" fill="#bbdefb" text-anchor="middle">WROOM-32U</text>
+  <text x="440" y="245" font-size="11" fill="#bbdefb" text-anchor="middle">240 MHz · WiFi</text>
+
+  <!-- ESP32 -> écran -->
+  <path d="M528,188 C572,188 577,118 614,112" fill="none" stroke="#5b6b7b" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="568" y="148" font-size="10.5" fill="#90a4ae" text-anchor="middle">HSPI</text>
+
+  <!-- ESP32 -> WiFi/serveur -->
+  <path d="M528,242 C577,242 582,326 614,334" fill="none" stroke="#5b6b7b" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="568" y="296" font-size="10.5" fill="#90a4ae" text-anchor="middle">WiFi</text>
+
+  <!-- ===== Écran matrice (haut droite) ===== -->
+  <rect x="616" y="62" width="234" height="92" rx="12" fill="#f3e9fb" stroke="#7b1fa2" stroke-width="1.5"/>
+  <text x="733" y="90" font-size="15" font-weight="700" fill="#7b1fa2" text-anchor="middle">Écran LED HUB75</text>
+  <text x="733" y="111" font-size="12.5" fill="#4a148c" text-anchor="middle">Matrice 64 × 32 px</text>
+  <text x="733" y="131" font-size="11" fill="#8e6aa8" text-anchor="middle">affichage en direct</text>
+
+  <!-- ===== Serveur (bas droite) ===== -->
+  <rect x="616" y="292" width="234" height="104" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+  <text x="733" y="322" font-size="15" font-weight="700" fill="#2e7d32" text-anchor="middle">Serveurs AirCarto</text>
+  <text x="733" y="344" font-size="12" fill="#1b5e20" text-anchor="middle">envoi toutes les 60 s</text>
+  <text x="733" y="364" font-size="11.5" fill="#2e7d32" text-anchor="middle" font-weight="600">consultable sur monmoduleair.fr</text>
+  <text x="733" y="383" font-size="11" fill="#4c8c50" text-anchor="middle">+ mises à jour OTA</text>
+
+  <text x="44" y="430" font-size="11" fill="#90a4ae">Schéma de principe — ModuleAir WiFi (V4)</text>
+</svg>

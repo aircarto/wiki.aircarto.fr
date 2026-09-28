@@ -9,6 +9,7 @@ Bienvenue sur la documentation des produits AirCarto.
 | [ModuleAir WiFi](moduleair-wifi/index.md) | Capteur de qualité de l'air connecté en WiFi |
 | [ModuleAir Pro](moduleair-pro/index.md) | Version professionnelle du ModuleAir |
 | [ModuleAir Light](moduleair-light/index.md) | Version allégée du ModuleAir, sans écran |
+| [ModuleAir Mini](moduleair-mini/index.md) | Version tactile interactive du ModuleAir — CO₂, température, humidité |
 | [NebuleAir WiFi](nebuleair-wifi/index.md) | Capteur de qualité de l'air intérieur WiFi |
 | [NebuleAir Pro](nebuleair-pro/index.md) | Version professionnelle du NebuleAir |
 | [Edu Kit](edukit/index.md) | Kit pédagogique qualité de l'air |

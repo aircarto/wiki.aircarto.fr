@@ -71,6 +71,16 @@ Le NebuleAir Pro peut être alimenté de deux manières :
 - **Secteur** : alimentation filaire classique
 - **Autonome** : pack batterie + panneau solaire
 
+#### Autonomie énergétique — partenariat Re-Lion Factory
+
+Pour les déploiements autonomes (sans accès au secteur), nous travaillons avec notre partenaire **[Re-Lion Factory](https://re-lion-factory.com/)** sur des **« powerbox »** : des boîtiers d'alimentation autonomes associant une **batterie** et un **panneau solaire**.
+
+Le principe est simple : le panneau solaire recharge la batterie en journée, qui alimente à son tour le NebuleAir Pro en continu, y compris la nuit et lors des périodes peu ensoleillées. La capacité de la batterie et la puissance du panneau sont dimensionnées en fonction de la consommation du capteur (voir [Consommation électrique](#consommation-electrique)) afin de garantir un fonctionnement permanent, sans intervention ni raccordement filaire.
+
+Cette solution permet d'installer le capteur sur des sites isolés (mâts, zones rurales, chantiers, etc.) où aucune source d'alimentation n'est disponible.
+
+![Alimentation solaire autonome du NebuleAir Pro (powerbox Re-Lion Factory)](../assets/images/alim-solairenebuleairpro.jpeg){ width="100%" }
+
 ### Consommation électrique
 
 ![Consommation moyenne 350 mA](../assets/images/350mA_minimal.svg){ width="600" }
@@ -369,5 +379,5 @@ Pièces permettant de fixer les PCB (CM4 et SARA) sur le fond du boîtier. L'att
 
 ![Attaches PCB](../assets/images/attaches_PCB.png){ width="400" }
 
-[:material-download: Télécharger attachesCM4 (STEP)](../assets/3d_files/attachesCM4.step){ .md-button }
-[:material-download: Télécharger attachesSARA (STEP)](../assets/3d_files/attachesSARA.step){ .md-button }
+[:material-download: Télécharger attachesCM4 (STEP)](../assets/3d_files/AttachesCM4.step){ .md-button }
+[:material-download: Télécharger attachesSARA (STEP)](../assets/3d_files/AttachesSARA.step){ .md-button }

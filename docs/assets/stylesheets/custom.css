@@ -2,3 +2,59 @@
 [data-md-color-scheme="slate"] .md-tabs {
   background-color: #2b2b2b;
 }
+
+/* Paragraphe vide laissé par md_in_html autour des blocs <div> bruts */
+.md-typeset p:empty {
+  display: none;
+}
+
+/* Galerie d'aperçus d'écran LED (ModuleAir) — juste l'écran, sans cadre.
+   Grille 2 colonnes, largeur bornée pour que les écrans restent gros mais
+   pas démesurés (et qu'un élément orphelin ne s'étire pas sur toute la ligne). */
+.md-typeset .screens {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.9rem 1.1rem;
+  max-width: 660px;
+  margin: 1.2em 0;
+}
+.md-typeset .screens figure {
+  margin: 0;
+  text-align: center;
+}
+.md-typeset .screens img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 5px;
+  background: #000;
+}
+.md-typeset .screens figcaption {
+  margin-top: 0.35rem;
+  font-size: 0.74rem;
+  line-height: 1.25;
+  color: var(--md-default-fg-color--light);
+}
+@media screen and (max-width: 480px) {
+  .md-typeset .screens {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Vidéo YouTube intégrée : conteneur responsive au ratio 16:9 */
+.md-typeset .video-embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 1.2em 0;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #000;
+}
+.md-typeset .video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
