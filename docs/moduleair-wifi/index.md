@@ -78,6 +78,20 @@ Le boîtier est composé d'éléments **imprimés en 3D**, conçus sur mesure po
 
 Le fichier 3D du boîtier est téléchargeable dans la section [Fichiers 3D](#fichiers-3d).
 
+### Dimensions
+
+Encombrement hors tout de la version avec matrice **P2.5** :
+
+| Hauteur | Largeur | Profondeur |
+|---------|---------|------------|
+| **79,2 mm** | **159,9 mm** | **45,9 mm** |
+
+La profondeur se décompose en **30,6 mm** de boîtier et **13,4 mm** d'écran (44,0 mm), plus la légère saillie arrière du capteur de particules. Câble d'alimentation non compris.
+
+![Encombrement du ModuleAir WiFi : vues de face, de gauche et de dessus cotées](../assets/images/ModuleAir_WiFi_02_encombrement.png){ width="100%" loading=lazy }
+
+Les plans complets sont dans la section [Dessins techniques](#dessins-techniques).
+
 ### Connectivité
 
 Le ModuleAir WiFi se connecte à un réseau **WiFi 2.4 GHz** classique (WPA/WPA2). Il transmet ses mesures par internet vers les serveurs AirCarto.
@@ -675,6 +689,45 @@ Le boîtier du ModuleAir est imprimable en 3D. Le fichier du corps principal est
 ![Corps du boîtier ModuleAir WiFi — aperçu du fichier 3D](../assets/images/moduleair_wifi_3d_corps.png){ width="400" }
 
 [:material-download: Télécharger le fichier STL](../assets/3d_files/ModuleAirMiniCorps_v41.stl){ .md-button }
+
+## Dessins techniques
+
+Plans issus du modèle CAO (format A3, cotes nominales en mm, sans tolérance, document non contractuel). Chaque planche se télécharge en pleine résolution (PNG 3308 × 2339) avec le lien placé dessous.
+
+### Vues générales
+
+![Vues générales du ModuleAir WiFi : face, dessus, dessous, côtés et perspectives](../assets/images/ModuleAir_WiFi_01_vues.png){ width="100%" loading=lazy }
+
+[:material-download: Planche en pleine résolution](../assets/images/ModuleAir_WiFi_01_vues.png)
+
+### Encombrement
+
+![Encombrement du ModuleAir WiFi : 79,2 × 159,9 × 45,9 mm](../assets/images/ModuleAir_WiFi_02_encombrement.png){ width="100%" loading=lazy }
+
+[:material-download: Planche en pleine résolution](../assets/images/ModuleAir_WiFi_02_encombrement.png)
+
+### Composants
+
+![Composants du ModuleAir WiFi : afficheur LED, boîtier, ouïes d'aération, carte principale, capteur CO₂ S88, NextPM, plaque arrière](../assets/images/ModuleAir_WiFi_03_composants.png){ width="100%" loading=lazy }
+
+[:material-download: Planche en pleine résolution](../assets/images/ModuleAir_WiFi_03_composants.png)
+
+| Rep. | Désignation | Remarque |
+|------|-------------|----------|
+| 1 | Afficheur matrice LED RGB | Façade, affichage CO₂ et indicateur de qualité |
+| 2 | Boîtier | Impression 3D |
+| 3 | Ouïes d'aération latérales | Sur les deux flancs |
+| 4 | Carte électronique principale | WiFi (ESP32) |
+| 5 | Capteur CO₂ Senseair S88 | NDIR, 33,5 × 20 × 8,5 mm, filtre côté ouïes |
+| 6 | Support latéral du S88 | Intégré au boîtier, maintien sur la tranche |
+| 7 | Capteur de particules NextPM | PM1 / PM2.5 / PM10 |
+| 8 | Plaque arrière | Avec ajours hexagonaux |
+
+### Perspectives et vue arrière
+
+![Perspectives avant et arrière du ModuleAir WiFi, et vue arrière à l'échelle 1:1 avec plaque translucide](../assets/images/ModuleAir_WiFi_04_perspectives.png){ width="100%" loading=lazy }
+
+[:material-download: Planche en pleine résolution](../assets/images/ModuleAir_WiFi_04_perspectives.png)
 
 ## Documentation matérielle
 

@@ -75,6 +75,8 @@ Une **carte microSD** enregistre une ligne CSV par cycle de mesure. Branché à 
 
 Le boîtier est **imprimé en 3D**, incliné vers l'utilisateur pour que l'écran se lise depuis une position assise. Le **nom du capteur est gravé sur la face avant** (`MINI003` sur les photos de cette page) : c'est l'identifiant sous lequel il apparaît dans l'application et dans les données transmises.
 
+L'écran et sa carte (module Guition JC4827W543) mesurent **120 × 70,2 mm**, pour une zone d'affichage utile de **95 × 54 mm**.
+
 ### Alimentation
 
 Le ModuleAir Mini se branche sur un **port USB-C 5 V** : chargeur de téléphone, port USB d'un ordinateur ou d'une multiprise. Branché, il fonctionne en continu.
