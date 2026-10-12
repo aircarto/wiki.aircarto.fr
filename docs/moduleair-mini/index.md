@@ -8,15 +8,15 @@
 
 Le **ModuleAir Mini** est la version **tactile et interactive** du ModuleAir. Là où le [ModuleAir WiFi](../moduleair-wifi/index.md) affiche ses mesures sur un grand écran LED accroché au mur, le Mini se pose sur un bureau ou une table : un boîtier incliné équipé d'un **écran couleur tactile de 4,3 pouces**, qui assure à la fois l'affichage et la configuration.
 
-Il mesure le **CO₂**, la **température** et l'**humidité**, affiche les résultats en continu avec le même code couleur que le reste de la gamme, les **enregistre sur une carte mémoire**, et les transmet **toutes les 60 secondes** aux serveurs AirCarto quand il est connecté au WiFi.
+Il mesure le **CO₂**, la **température** et l'**humidité**, affiche les résultats en continu avec le même code couleur que le reste de la gamme et les **enregistre sur une carte mémoire**. Les données se récupèrent de [trois façons](#recuperer-les-donnees) : par **câble USB-C** (fichier CSV), par **Bluetooth** avec l'application Cyan Sensor, ou automatiquement par **WiFi**. Il existe en **version sur batterie**, pour passer d'une salle à l'autre.
 
 ![Le ModuleAir Mini en usage, sur un bureau](../assets/images/moduleair_mini_bureau.jpg){ width="100%" }
 
 !!! info "Deux façons de régler l'appareil"
     Le ModuleAir Mini n'a ni bouton ni interface web. L'heure, le réseau WiFi, la luminosité, les mises à jour et le journal de bord se règlent **sur l'écran tactile**, ou **à distance depuis l'application Cyan Sensor** une fois l'appareil connecté.
 
-!!! success "Il fonctionne aussi sans réseau"
-    Le WiFi est **facultatif**. Sans réseau, l'appareil mesure, affiche et **enregistre sur sa carte mémoire** ; seule la transmission vers les serveurs AirCarto est suspendue.
+!!! success "Le WiFi n'est pas indispensable"
+    Sans réseau, l'appareil mesure, affiche et **enregistre sur sa carte mémoire**. Les données se récupèrent ensuite **par câble USB-C** ou **par Bluetooth** avec l'application Cyan Sensor, qui les envoie aux serveurs AirCarto depuis le téléphone. Voir [Récupérer les données](#recuperer-les-donnees).
 
 ### Ce qui le distingue du ModuleAir WiFi
 
@@ -27,6 +27,8 @@ Il mesure le **CO₂**, la **température** et l'**humidité**, affiche les rés
 | Mesures | PM1 · PM2.5 · PM10 · CO₂ | **CO₂ · température · humidité** |
 | Configuration WiFi | portail captif ou Bluetooth | **Bluetooth (app Cyan Sensor) ou clavier à l'écran** |
 | Stockage local | — | **carte microSD (journal CSV)** |
+| Alimentation | secteur | **secteur USB-C, ou batterie (version sur batterie)** |
+| Récupération des données | WiFi | **USB-C, Bluetooth (app Cyan Sensor) ou WiFi** |
 | Usage | mural, salle de classe, ERP | **bureau, table, poste de travail** |
 
 ## Caractéristiques techniques
@@ -42,7 +44,7 @@ Le ModuleAir Mini rassemble, dans un boîtier imprimé en 3D, une carte ESP32-S3
 - **Flash** : 4 Mo
 - **PSRAM** : 8 Mo
 - **Radio** : WiFi 802.11 b/g/n **2.4 GHz** + **Bluetooth LE**
-- **Alimentation** : USB-C 5 V
+- **Alimentation** : USB-C 5 V ; batterie Li-ion 18650 de 3 200 mAh sur la version batterie
 
 ### L'écran tactile
 
@@ -61,7 +63,7 @@ Le module **Guition JC4827W543** réunit sur une seule carte l'ESP32-S3, la dall
 
 | Composant | Rôle | Interface |
 |-----------|------|-----------|
-| **[Senseair S8 LP](https://senseair.com/product/s8-lp/)** | Dioxyde de carbone (CO₂) | UART — Modbus RTU |
+| **[Senseair S88](https://senseair.com/product/s88/)** | Dioxyde de carbone (CO₂) | UART — Modbus RTU |
 | **BME280** (Bosch) | Température · humidité · pression | I²C |
 | **DS3231** | Horloge temps réel, sauvegardée par pile | I²C |
 
@@ -75,26 +77,42 @@ Le boîtier est **imprimé en 3D**, incliné vers l'utilisateur pour que l'écra
 
 ### Alimentation
 
-Le ModuleAir Mini se branche sur un **port USB-C 5 V** : chargeur de téléphone, port USB d'un ordinateur ou d'une multiprise. Il est conçu pour rester alimenté en permanence.
+Le ModuleAir Mini se branche sur un **port USB-C 5 V** : chargeur de téléphone, port USB d'un ordinateur ou d'une multiprise. Branché, il fonctionne en continu.
 
 !!! warning "Alimentation recommandée"
-    Le capteur de CO₂ demande jusqu'à **300 mA en pic** pendant sa mesure, en plus de l'écran et du WiFi. Un adaptateur secteur **5 V / 1 A** est recommandé ; un port USB ancien ou un hub non alimenté peut provoquer des redémarrages.
+    Le capteur de CO₂ demande des pics de courant pendant sa mesure, en plus de l'écran et du WiFi. Un adaptateur secteur **5 V / 1 A** est recommandé ; un port USB ancien ou un hub non alimenté peut provoquer des redémarrages.
+
+### Version sur batterie
+
+Le ModuleAir Mini existe en **version sur batterie** : une batterie **Li-ion 18650 de 3 200 mAh** est intégrée au boîtier. Le capteur se déplace alors de salle en salle **sans interrompre ses mesures** ni son enregistrement.
+
+- **Recharge** par le même câble **USB-C**, sur un adaptateur secteur ; la charge est gérée par la carte électronique.
+- **Niveau de batterie** affiché à l'écran.
+- La batterie est au **format standard 18650** : elle se remplace sans changer l'appareil.
+
+| Usage | Autonomie |
+|-------|-----------|
+| Écran allumé en permanence | environ **8 h** |
+| Écran en veille (Réglages → Écran → Veille → **Éteindre**) | environ **48 h** |
+
+!!! tip "Prolonger l'autonomie"
+    Le mode de veille **Éteindre** coupe l'éclairage de l'écran après 10 secondes sans le toucher ; un toucher le rallume. Le mode **Atténuer** garde l'écran lisible à luminosité minimale. Les mesures et l'enregistrement continuent dans tous les cas.
 
 ## Les capteurs en détail
 
-### Dioxyde de carbone (CO₂) — Senseair S8 LP
-
-![Capteur de CO₂ NDIR Senseair S8 LP](../assets/images/senseair_s8.jpg){ width="240" }
+### Dioxyde de carbone (CO₂) — Senseair S88
 
 Le **CO₂** est le meilleur indicateur du **renouvellement de l'air** dans une pièce occupée. L'air extérieur en contient environ **420 ppm** ; dans une pièce fermée, le taux monte avec la respiration des personnes présentes. Au-delà de **~1000–1500 ppm**, l'air est considéré comme **confiné** : il est temps d'aérer. Des niveaux élevés s'accompagnent souvent de somnolence, de maux de tête et d'une baisse de concentration, et le CO₂ est un bon indicateur indirect du risque de transmission des maladies aéroportées.
 
-Le **S8 LP** du fabricant **suédois [Senseair](https://senseair.com/)** fonctionne par principe **NDIR** (*Non-Dispersive InfraRed*, infrarouge non dispersif) : le CO₂ absorbe une longueur d'onde infrarouge précise ; en mesurant cette absorption dans une chambre optique, le capteur en déduit la concentration. C'est la méthode de référence pour la mesure du CO₂ en intérieur, robuste et stable dans le temps.
+Le **S88** du fabricant **suédois [Senseair](https://senseair.com/)** fonctionne par principe **NDIR** (*Non-Dispersive InfraRed*, infrarouge non dispersif) : le CO₂ absorbe une longueur d'onde infrarouge précise ; en mesurant cette absorption dans une chambre optique, le capteur en déduit la concentration. C'est la méthode de référence pour la mesure du CO₂ en intérieur, robuste et stable dans le temps.
 
 | Caractéristique | Valeur |
 |-----------------|--------|
 | Principe | NDIR (infrarouge non dispersif) |
+| Plage | 400 à 10 000 ppm |
+| Précision | ± 40 ppm ± 3 % de la mesure |
 | Calibration | **ABC** (*Automatic Baseline Calibration*) automatique, sans entretien |
-| Alimentation | 5 V — jusqu'à **300 mA** en pic pendant la mesure |
+| Durée de vie | plus de 15 ans |
 | Interface | UART — **Modbus RTU** (9600 bauds, 8N1) |
 
 !!! tip "Calibration automatique"
@@ -265,19 +283,21 @@ La panne est détectée **en continu**, pas seulement au démarrage : trois lect
 
 ## Les réglages sur l'écran
 
-Touchez l'**heure** en bas à droite d'un écran de mesure : le menu **RÉGLAGES** s'ouvre. Cinq entrées, l'une sous l'autre (la liste défile) :
+Touchez l'**heure** en bas à droite d'un écran de mesure : le menu **RÉGLAGES** s'ouvre. Les principales entrées, l'une sous l'autre (la liste défile) :
 
 | Entrée | Fonction |
 |--------|----------|
 | :material-clock-outline: **DATE ET HEURE** | Régler l'horloge avec des molettes tactiles |
 | :material-wifi: **RÉSEAU WI-FI** | Choisir un réseau, saisir le mot de passe, ou **oublier** le réseau enregistré |
+| :material-bluetooth: **TÉLÉVERSEMENT** | Envoyer les mesures enregistrées par Bluetooth, avec l'application Cyan Sensor (voir [Récupérer les données](#recuperer-les-donnees)) |
 | :material-download: **MISE À JOUR** | Vérifier et installer une nouvelle version du firmware |
-| :material-image: **ÉCRAN** | Luminosité et disposition du clavier |
+| :material-image: **ÉCRAN** | Luminosité, veille et disposition du clavier |
 | :material-cog: **SYSTÈME** | Informations, journal de bord, réinitialisation |
 
 ### Écran
 
 - **Luminosité** : un curseur, de la valeur minimale (l'extinction complète n'est pas proposée) au maximum. Le réglage est mémorisé.
+- **Veille** : **Jamais** (par défaut, l'écran reste allumé), **Atténuer** (luminosité minimale après 10 s sans toucher l'écran) ou **Éteindre** (l'écran s'éteint après 10 s ; un toucher le rallume). À utiliser sur batterie pour prolonger l'autonomie.
 - **Clavier** : deux pastilles côte à côte : **AZERTY** (par défaut) ou **QWERTY**. Le changement s'applique immédiatement au clavier de l'écran WiFi.
 
 ### Système
@@ -329,29 +349,50 @@ Une fois connecté au WiFi, le ModuleAir Mini **se publie sur le réseau local**
 
     Le serveur **n'est actif que lorsque le capteur est en ligne**, à l'inverse du Bluetooth qui ne l'est que hors connexion. Le Mini n'expose ni `/api/config`, ni les routes relatives aux capteurs de particules : il n'a ni matrice LED, ni capteurs activables, ni seuils réglables.
 
-## Consulter les données
+## Récupérer les données
 
-### Avec accès internet : l'historique en ligne
+Le ModuleAir Mini **enregistre toutes ses mesures en local**, sur sa carte microSD, qu'il soit connecté ou non. Pour les récupérer, trois options, au choix :
 
-Quand le capteur dispose d'un accès internet, il transmet ses mesures **toutes les 60 secondes** vers les serveurs AirCarto, où elles sont historisées et consultables à distance :
+| Option | Ce qu'il faut | Résultat |
+|--------|---------------|----------|
+| **1. Câble USB-C** | Un ordinateur | Le fichier **CSV**, à ouvrir dans un tableur |
+| **2. Bluetooth** | Un téléphone avec l'application **Cyan Sensor** | Les mesures sont **envoyées aux serveurs AirCarto via le téléphone**, sans WiFi sur le capteur |
+| **3. WiFi** | Un réseau WiFi 2,4 GHz | Envoi **automatique** toutes les 60 secondes vers les serveurs AirCarto |
+
+Avec les options 2 et 3, les mesures se consultent en ligne :
 
 [:material-chart-line: Consulter mes données sur monmoduleair.fr](https://monmoduleair.fr){ .md-button }
 
-!!! tip "Les valeurs transmises sont des moyennes"
-    Les capteurs sont lus toutes les **2,5 secondes** pour l'écran, et échantillonnés toutes les **10 secondes** pour l'envoi. Toutes les **60 secondes**, c'est la **moyenne** des échantillons valides de la fenêtre qui est transmise. Aucune valeur instantanée n'est envoyée telle quelle.
+### Option 1 — Par câble USB-C : le fichier CSV
 
-### Sans accès internet : la carte mémoire
-
-Sans accès internet, les mesures ne sont pas transmises, mais elles sont conservées : le ModuleAir Mini écrit une ligne CSV par cycle de mesure sur sa carte microSD.
+**Branchez le capteur à un ordinateur avec un câble USB-C** : il apparaît comme une **clé USB**. Le fichier `data.csv` s'ouvre dans n'importe quel tableur, sans logiciel à installer.
 
 ```
 datetime,co2_ppm,temp_c,hum_pct
 ```
 
-Pour récupérer le fichier, **branchez le capteur à un ordinateur avec un câble USB-C** : il apparaît comme une **clé USB**. Le fichier `data.csv` s'ouvre dans n'importe quel tableur.
-
 !!! note "Horodatage"
     Une ligne n'est écrite que si le firmware dispose d'une heure sûre. C'est ce que garantit l'étape « date et heure » de la mise en route.
+
+### Option 2 — Par Bluetooth, avec l'application Cyan Sensor
+
+Pour un capteur **sans WiFi**, le téléphone sert de relais : l'application récupère les mesures enregistrées par Bluetooth et les envoie aux serveurs AirCarto par la connexion du téléphone.
+
+1. Sur le capteur : **Réglages → TÉLÉVERSEMENT**, puis **ACTIVER LE BLUETOOTH**
+2. Dans l'[application Cyan Sensor](https://aircarto.fr/cyan-sensor/) : **+** → **Téléverser un ModuleAir mini**
+3. Sélectionnez le capteur : l'application récupère les mesures et les envoie
+
+Seules les mesures **pas encore reçues** par les serveurs sont transférées : on peut téléverser aussi souvent qu'on le souhaite, sans créer de doublon. L'écran reste allumé pendant le transfert.
+
+### Option 3 — Par WiFi : l'envoi automatique
+
+Connecté au WiFi (voir [Connecter le capteur au WiFi](#3-connecter-le-capteur-au-wifi)), le capteur transmet ses mesures **toutes les 60 secondes**, sans aucune action.
+
+!!! tip "Les valeurs transmises sont des moyennes"
+    Les capteurs sont lus toutes les **2,5 secondes** pour l'écran, et échantillonnés toutes les **10 secondes** pour l'envoi. Toutes les **60 secondes**, c'est la **moyenne** des échantillons valides de la fenêtre qui est transmise. Aucune valeur instantanée n'est envoyée telle quelle.
+
+!!! success "Aucune mesure perdue en cas de coupure"
+    Si le WiFi ou le serveur est indisponible, les mesures restent sur la carte mémoire. Dès que la connexion revient, le capteur **renvoie automatiquement les minutes manquantes**, datées à leur heure réelle.
 
 ### Format des données envoyées
 
