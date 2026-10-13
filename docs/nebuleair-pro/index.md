@@ -31,13 +31,19 @@ Il est équipé d'un modem 4G **u-blox SARA-R500** qui communique sur les bandes
 
 Des capteurs supplémentaires peuvent être ajoutés pour étendre les capacités de mesure :
 
-**Sondes gaz Cairsens®** (fabricant : [Envea](https://www.envea.global/)) :
+**Sondes gaz électrochimiques**, au choix entre deux fabricants :
+
+**Cairsens®** (fabricant : [Envea](https://www.envea.global/)) :
 
 ![Cairsens® Envea](../assets/images/cairSens_envea.png){ width="400" }
 
 - NO2 (dioxyde d'azote)
 - O3 (ozone)
 - Autres gaz selon les modèles Cairsens® disponibles
+
+**Alphasense** (fabricant : [Alphasense](https://www.alphasense.com/)) :
+
+- Capteurs électrochimiques, gaz selon les modèles Alphasense disponibles
 
 **Sonomètre** :
 
