@@ -66,6 +66,10 @@
   overflow: hidden;
   background: var(--md-code-bg-color);
 }
+/* Mode clair : fond bleu-gris pour que le boîtier gris clair ressorte */
+[data-md-color-scheme="default"] .md-typeset .viewer-3d {
+  background: radial-gradient(ellipse at 50% 40%, #a9b8c6 0%, #6f8396 100%);
+}
 .md-typeset .viewer-3d model-viewer {
   display: block;
   width: 100%;

@@ -1,5 +1,8 @@
 # Modèles 3D
 
+!!! warning "Page en cours de modification"
+    Cette page est en cours de construction : les modèles et l'emplacement des pièces peuvent encore changer.
+
 Visualisez nos capteurs en 3D, directement dans le navigateur : **faites tourner** le modèle avec la souris ou le doigt, **zoomez** avec la molette ou en pinçant. Sur téléphone, le bouton en bas à droite affiche le capteur en réalité augmentée, posé dans votre pièce.
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>

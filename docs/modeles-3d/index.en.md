@@ -1,5 +1,8 @@
 # 3D models
 
+!!! warning "Page under construction"
+    This page is being worked on: the models and the position of the parts may still change.
+
 View our sensors in 3D, right in your browser: **rotate** the model with your mouse or finger, **zoom** with the wheel or by pinching. On a phone, the button at the bottom right shows the sensor in augmented reality, placed in your room.
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
