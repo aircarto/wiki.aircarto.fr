@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
       fetch(url).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
         if (!d || !d.boitier) return;
         var lo = d.boitier.min, hi = d.boitier.max, mm = d.boitier.mm;
-        var off = 0.012, side = hi[0] + 0.022; // décalage des lignes hors du boîtier (et des AirVent)
+        var off = 0.024, side = hi[0] + 0.022; // décalage des lignes hors du boîtier (AirVent, presse-étoupe)
         var P = {
           w1: [lo[0], lo[1] - off, hi[2]], w2: [hi[0], lo[1] - off, hi[2]],
           h1: [side, lo[1], hi[2]], h2: [side, hi[1], hi[2]],
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (dimsInfo) {
           var e = d.encombrement_mm.map(Math.round);
           dimsInfo.textContent = (en ? "Enclosure " : "Boîtier ") + d.boitier.ref + " : " + mm.join(" × ") + " mm" +
-            (en ? " · overall size with vents and brackets: " : " · encombrement avec AirVent et pattes : ") +
+            (en ? " · overall size with vents, cable gland and brackets: " : " · encombrement avec AirVent, presse-étoupe et pattes : ") +
             e.join(" × ") + " mm";
         }
         if (dimsBox) {

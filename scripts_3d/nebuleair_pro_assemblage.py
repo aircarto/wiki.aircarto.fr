@@ -66,6 +66,40 @@ def _nextpm_centered_vent_x():
 if NEXTPM_CENTERED_X:
     VENTS = [(n, f, (_nextpm_centered_vent_x(), b) if n == NEXTPM_VENT else (a, b)) for n, f, (a, b) in VENTS]
 
+# Presse-étoupe du cordon d'alimentation : face du bas (Y=-87.5), à gauche vu de
+# face (X<0), à mi-profondeur du fond. Modèle générique M16 x 1,5 (câble Ø4-8).
+GLAND_X, GLAND_Z = -30.0, 18.0
+GLAND_HOLE_D = 16.2
+CABLE_D = 6.0
+CABLE_LEN = 90.0       # tronçon de cordon affiché sous le capteur (hors cotes)
+
+
+def gland_parts(wall):
+    """Presse-étoupe générique M16 dans son repère : axe +Z vers l'extérieur,
+    face extérieure de la paroi en Z=0, face intérieure en Z=-wall."""
+    def hexa(af, h, z0):
+        m = trimesh.creation.cylinder(radius=af / np.sqrt(3), height=h, sections=6)
+        m.apply_translation([0, 0, z0 + h / 2])
+        return m
+    body = trimesh.util.concatenate([
+        hexa(20.0, 5.0, 0.0),                                  # 6 pans contre la paroi
+        cyl(16.0, 4.0, 0, 0, 5.0),                             # filetage du chapeau
+        cyl(19.0, 6.0, 0, 0, 7.0),                             # chapeau
+        cyl(15.0, 2.5, 0, 0, 13.0),                            # dôme
+        cyl(15.6, wall + 6.0, 0, 0, -wall - 6.0),              # filetage M16 dans la paroi
+    ])
+    nut = hexa(20.0, 4.0, -wall - 4.0)                        # contre-écrou intérieur
+    return body, nut
+
+
+def gland_frame(p):
+    """Repère presse-étoupe -> boîtier : axe vers -Y (sortie par le bas)."""
+    T = np.eye(4)
+    T[:3, :3] = np.column_stack([[1, 0, 0], [0, 0, 1], [0, -1, 0]])
+    T[:3, 3] = [GLAND_X, -p["length"] / 2, GLAND_Z]
+    return T
+
+
 # Poteau (mât) et colliers de serrage : décor de montage, hors cotes du capteur.
 POLE_D = 60.0          # diamètre du poteau (mm), courant pour un mât d'éclairage
 POLE_LEN = 420.0       # longueur du tronçon affiché (mm)
@@ -80,6 +114,8 @@ COLORS = {
     "patte_poteau": [128, 135, 144, 255],
     "poteau": [150, 156, 160, 255],
     "collier": [200, 204, 208, 255],
+    "presse_etoupe": [38, 40, 44, 255],
+    "cable": [22, 23, 25, 255],
     "nextpm_metal": [175, 180, 186, 255],
     "nextpm_noir": [32, 34, 37, 255],
 }
@@ -235,6 +271,9 @@ def main():
     body, cover = build(p)
     W = p["width"] / 2
     body_cuts = [hole_cutter(f, a, b, p) for _, f, (a, b) in VENTS if f in ("droite", "gauche")]
+    gland_hole = cyl(GLAND_HOLE_D, 20.0, 0, 0, -10.0)
+    gland_hole.apply_transform(gland_frame(p))
+    body_cuts.append(gland_hole)
     cover_cuts = [hole_cutter(f, a, b, p) for _, f, (a, b) in VENTS if f == "avant"]
     if body_cuts:
         body = diff(body, body_cuts)
@@ -266,6 +305,13 @@ def main():
         name = f"patte_poteau_{'bas' if y < 0 else 'haut'}"
         scene.add_geometry(paint(m, COLORS["patte_poteau"]), node_name=name, geom_name=name)
         scene.add_geometry(edges(m), node_name=f"{name}_aretes", geom_name=f"{name}_aretes")
+
+    # --- Presse-étoupe du cordon d'alimentation (bas, à gauche) ---
+    Tg = gland_frame(p)
+    for part, mesh in zip(("presse_etoupe", "presse_etoupe_ecrou"), gland_parts(p["wall"])):
+        mesh.apply_transform(Tg)
+        scene.add_geometry(paint(mesh, COLORS["presse_etoupe"]), node_name=part, geom_name=part)
+        scene.add_geometry(edges(mesh), node_name=f"{part}_aretes", geom_name=f"{part}_aretes")
 
     # --- NextPM sous le couvercle ---
     vname, vface, (va, vb) = next(v for v in VENTS if v[0] == NEXTPM_VENT)
@@ -307,6 +353,14 @@ def main():
             baseColorFactor=COLORS["collier"], metallicFactor=0.8, roughnessFactor=0.3))
         scene.add_geometry(m, node_name=name, geom_name=name)
     print(f"poteau Ø{POLE_D:.0f} : axe à Z={zc:.1f} mm (dos du boîtier à Z=0)")
+
+    # Cordon d'alimentation sortant du presse-étoupe (décor, hors cotes) :
+    # de l'intérieur du boîtier jusqu'à CABLE_LEN sous le chapeau.
+    y_in, y_out = -p["length"] / 2 + 12.0, -p["length"] / 2 - 15.5 - CABLE_LEN
+    cable = trimesh.creation.cylinder(radius=CABLE_D / 2, height=y_in - y_out, sections=32)
+    cable.apply_transform(trimesh.transformations.rotation_matrix(np.pi / 2, [1, 0, 0]))
+    cable.apply_translation([GLAND_X, (y_in + y_out) / 2, GLAND_Z])
+    scene.add_geometry(paint(cable, COLORS["cable"]), node_name="cordon_alim", geom_name="cordon_alim")
 
     # glTF : Y vers le haut (déjà le cas : +Y = haut du capteur posé), en mètres.
     scene.apply_translation(-centre)

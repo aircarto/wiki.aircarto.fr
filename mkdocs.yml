@@ -33,7 +33,7 @@ extra_css:
   - assets/stylesheets/custom.css?v=8
 
 extra_javascript:
-  - assets/javascripts/viewer-3d.js?v=7
+  - assets/javascripts/viewer-3d.js?v=9
 
 plugins:
   - search:
