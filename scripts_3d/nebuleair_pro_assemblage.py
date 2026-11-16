@@ -66,29 +66,32 @@ def _nextpm_centered_vent_x():
 if NEXTPM_CENTERED_X:
     VENTS = [(n, f, (_nextpm_centered_vent_x(), b) if n == NEXTPM_VENT else (a, b)) for n, f, (a, b) in VENTS]
 
-# Presse-étoupe du cordon d'alimentation : face du bas (Y=-87.5), à gauche vu de
-# face (X<0), à mi-profondeur du fond. Modèle générique M16 x 1,5 (câble Ø4-8).
-GLAND_X, GLAND_Z = -30.0, 18.0
-GLAND_HOLE_D = 16.2
-CABLE_D = 6.0
+# Presse-étoupe du cordon d'alimentation : face du bas (Y=-87.5), à droite vu de
+# face (X>0), à mi-profondeur du fond. Modèle générique M12 x 1,5 (câble Ø3-6,5).
+GLAND_X, GLAND_Z = 30.0, 18.0
+GLAND_HOLE_D = 12.2
+GLAND_HEX = 15.0       # sur plats
+GLAND_CAP_D = 14.0
+GLAND_OUT = 13.0       # saillie hors du boîtier
+CABLE_D = 5.0
 CABLE_LEN = 90.0       # tronçon de cordon affiché sous le capteur (hors cotes)
 
 
 def gland_parts(wall):
-    """Presse-étoupe générique M16 dans son repère : axe +Z vers l'extérieur,
+    """Presse-étoupe générique M12 dans son repère : axe +Z vers l'extérieur,
     face extérieure de la paroi en Z=0, face intérieure en Z=-wall."""
     def hexa(af, h, z0):
         m = trimesh.creation.cylinder(radius=af / np.sqrt(3), height=h, sections=6)
         m.apply_translation([0, 0, z0 + h / 2])
         return m
     body = trimesh.util.concatenate([
-        hexa(20.0, 5.0, 0.0),                                  # 6 pans contre la paroi
-        cyl(16.0, 4.0, 0, 0, 5.0),                             # filetage du chapeau
-        cyl(19.0, 6.0, 0, 0, 7.0),                             # chapeau
-        cyl(15.0, 2.5, 0, 0, 13.0),                            # dôme
-        cyl(15.6, wall + 6.0, 0, 0, -wall - 6.0),              # filetage M16 dans la paroi
+        hexa(GLAND_HEX, 4.0, 0.0),                             # 6 pans contre la paroi
+        cyl(GLAND_HOLE_D - 0.6, 3.0, 0, 0, 4.0),               # filetage du chapeau
+        cyl(GLAND_CAP_D, 4.5, 0, 0, 6.0),                      # chapeau
+        cyl(GLAND_CAP_D - 3.5, GLAND_OUT - 10.5, 0, 0, 10.5),  # dôme
+        cyl(GLAND_HOLE_D - 0.4, wall + 5.0, 0, 0, -wall - 5.0),  # filetage dans la paroi
     ])
-    nut = hexa(20.0, 4.0, -wall - 4.0)                        # contre-écrou intérieur
+    nut = hexa(GLAND_HEX, 3.5, -wall - 3.5)                   # contre-écrou intérieur
     return body, nut
 
 
@@ -306,7 +309,7 @@ def main():
         scene.add_geometry(paint(m, COLORS["patte_poteau"]), node_name=name, geom_name=name)
         scene.add_geometry(edges(m), node_name=f"{name}_aretes", geom_name=f"{name}_aretes")
 
-    # --- Presse-étoupe du cordon d'alimentation (bas, à gauche) ---
+    # --- Presse-étoupe du cordon d'alimentation (bas, à droite) ---
     Tg = gland_frame(p)
     for part, mesh in zip(("presse_etoupe", "presse_etoupe_ecrou"), gland_parts(p["wall"])):
         mesh.apply_transform(Tg)
@@ -356,7 +359,7 @@ def main():
 
     # Cordon d'alimentation sortant du presse-étoupe (décor, hors cotes) :
     # de l'intérieur du boîtier jusqu'à CABLE_LEN sous le chapeau.
-    y_in, y_out = -p["length"] / 2 + 12.0, -p["length"] / 2 - 15.5 - CABLE_LEN
+    y_in, y_out = -p["length"] / 2 + 12.0, -p["length"] / 2 - GLAND_OUT - CABLE_LEN
     cable = trimesh.creation.cylinder(radius=CABLE_D / 2, height=y_in - y_out, sections=32)
     cable.apply_transform(trimesh.transformations.rotation_matrix(np.pi / 2, [1, 0, 0]))
     cable.apply_translation([GLAND_X, (y_in + y_out) / 2, GLAND_Z])
