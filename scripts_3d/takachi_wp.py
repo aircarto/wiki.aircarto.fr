@@ -99,6 +99,28 @@ def build(p):
     return body, cover
 
 
+def bracket_wpmb_m4():
+    """Patte de fixation sur poteau Takachi WPMB-M4 (modèle simplifié, cotes du
+    plan public) : bloc 28 x 18 x 12 mm, gorge en V côté poteau, insert M4 côté
+    boîtier, 2 fentes pour le collier de serrage.
+
+    Repère : face d'appui contre le boîtier en Z=0, gorge vers -Z (Z de -12 à 0),
+    28 mm selon X, 18 mm selon Y (axe de la gorge = axe du poteau), centrée en X/Y.
+    """
+    from shapely.geometry import Polygon
+    profile = Polygon([(-14, 0), (14, 0), (14, -12), (10.2, -12), (5, -7.4),
+                       (-5, -7.4), (-10.2, -12), (-14, -12)])
+    m = trimesh.creation.extrude_polygon(profile, 18.0)  # profil (x, z), extrudé selon Y
+    m.apply_transform(trimesh.transformations.rotation_matrix(np.pi / 2, [1, 0, 0]))
+    m.apply_translation([0, 9.0, 0])
+    cutters = [cyl(5.6, 6.5, 0, 0, -6.0)]  # logement de l'insert M4
+    for x in (-6.55, 6.55):                 # fentes du collier (entraxe 13.1)
+        slot = trimesh.creation.box(extents=[2.5, 7.0, 30.0])
+        slot.apply_translation([x, 0, -6.0])
+        cutters.append(slot)
+    return diff(m, cutters)
+
+
 def main(ref):
     p = BOXES[ref]
     body, cover = build(p)

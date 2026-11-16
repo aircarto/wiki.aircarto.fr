@@ -21,7 +21,7 @@ import numpy as np
 import trimesh
 
 import nextpm
-from takachi_wp import BOXES, build, cyl, diff
+from takachi_wp import BOXES, bracket_wpmb_m4, build, cyl, diff
 
 ROOT = Path(__file__).resolve().parent.parent
 DIR = ROOT / "docs/assets/3d_files/nebuleair_pro"
@@ -71,6 +71,7 @@ COLORS = {
     "couvercle": [140, 147, 156, 255],
     "vent_top": [45, 52, 60, 255],
     "vent_ecrou": [70, 78, 88, 255],
+    "patte_poteau": [128, 135, 144, 255],
     "nextpm_metal": [175, 180, 186, 255],
     "nextpm_noir": [32, 34, 37, 255],
 }
@@ -220,6 +221,15 @@ def main():
             key = "vent_top" if part == "capot" else "vent_ecrou"
             scene.add_geometry(paint(m, COLORS[key]), node_name=f"{name}_{part}", geom_name=f"{name}_{part}")
             scene.add_geometry(edges(m), node_name=f"{name}_{part}_aretes", geom_name=f"{name}_{part}_aretes")
+
+    # --- Pattes de fixation sur poteau WPMB-M4 (dos du boîtier, trous M4) ---
+    bracket = bracket_wpmb_m4()
+    for i, (x, y) in enumerate(p["mount_holes"]):
+        m = bracket.copy()
+        m.apply_translation([x, y, 0.0])
+        name = f"patte_poteau_{'bas' if y < 0 else 'haut'}"
+        scene.add_geometry(paint(m, COLORS["patte_poteau"]), node_name=name, geom_name=name)
+        scene.add_geometry(edges(m), node_name=f"{name}_aretes", geom_name=f"{name}_aretes")
 
     # --- NextPM sous le couvercle ---
     vname, vface, (va, vb) = next(v for v in VENTS if v[0] == NEXTPM_VENT)
