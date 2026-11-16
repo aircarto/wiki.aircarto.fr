@@ -42,7 +42,7 @@ VENT_HOLE_D = 16.0  # filetage Ø15.6
 VENTS = [
     ("airvent_droite", "droite", (40.0, 18.0)),
     ("airvent_gauche", "gauche", (40.0, 18.0)),
-    ("airvent_avant", "avant", (0.0, 40.0)),
+    ("airvent_avant", "avant", (0.0, 40.0)),  # X recalculé plus bas si NEXTPM_CENTERED_X
 ]
 
 # NextPM : fixé sous le couvercle, tube d'entrée d'air emboîté dans l'AirVent
@@ -53,6 +53,18 @@ NEXTPM_VENT = "airvent_avant"
 NEXTPM_ROT_DEG = 180.0
 NEXTPM_INSERTION = 3.0  # mm de tube engagés dans l'AirVent
 NEXTPM_TUBE_XY = (51.8, 7.0)  # axe du tube dans le repère de nextpm.py
+NEXTPM_CENTERED_X = True  # NextPM centré en largeur : l'AirVent avant suit son tube
+
+
+def _nextpm_centered_vent_x():
+    """X de l'AirVent avant pour que le corps du NextPM soit centré (X=0)."""
+    centre_rel_tube = np.array([nextpm.L / 2 - NEXTPM_TUBE_XY[0], nextpm.W / 2 - NEXTPM_TUBE_XY[1], 0.0])
+    R = trimesh.transformations.rotation_matrix(np.radians(NEXTPM_ROT_DEG), [0, 0, 1])[:3, :3]
+    return float(-(R @ centre_rel_tube)[0])
+
+
+if NEXTPM_CENTERED_X:
+    VENTS = [(n, f, (_nextpm_centered_vent_x(), b) if n == NEXTPM_VENT else (a, b)) for n, f, (a, b) in VENTS]
 
 COLORS = {
     "corps": [128, 135, 144, 255],
