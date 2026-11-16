@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" font-family="system-ui,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="880" height="430" rx="16" fill="#ffffff" stroke="#e0e0e0"/>
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5b6b7b"/></marker>
+  </defs>
+
+  <rect x="20" y="18" width="840" height="266" rx="12" fill="#f7fafd" stroke="#1565c0" stroke-width="1.4" stroke-dasharray="7 5"/>
+  <text x="38" y="46" font-size="12" font-weight="700" fill="#1565c0" letter-spacing="0.4">DANS LE BOÎTIER · LES IMAGES NE SORTENT PAS DE CE CADRE</text>
+
+  <g font-size="12.5" fill="#37474f">
+    <rect x="38" y="62" width="186" height="92" rx="10" fill="#eef4fb" stroke="#1565c0" stroke-width="1.6"/>
+    <text x="54" y="90" font-size="16" font-weight="700" fill="#1565c0">Caméra</text>
+    <text x="54" y="113">Capteur 2 Mpx</text>
+    <text x="54" y="133">Images de 864 × 486</text>
+
+    <rect x="242" y="62" width="186" height="92" rx="10" fill="#eef4fb" stroke="#1565c0" stroke-width="1.6"/>
+    <text x="258" y="90" font-size="16" font-weight="700" fill="#1565c0">Détection</text>
+    <text x="258" y="113">Réseau YOLOv8n</text>
+    <text x="258" y="133">Exécuté sur le K230</text>
+
+    <rect x="446" y="62" width="186" height="92" rx="10" fill="#eef4fb" stroke="#1565c0" stroke-width="1.6"/>
+    <text x="462" y="90" font-size="15" font-weight="700" fill="#1565c0">Suivi et comptage</text>
+    <text x="462" y="113">Trajectoire, sens, filtres</text>
+    <text x="462" y="133">Un passage, un comptage</text>
+
+    <rect x="650" y="62" width="186" height="92" rx="10" fill="#eef4fb" stroke="#1565c0" stroke-width="1.6"/>
+    <text x="666" y="90" font-size="16" font-weight="700" fill="#1565c0">Envoi</text>
+    <text x="666" y="113">Un message par minute</text>
+    <text x="666" y="133">Attente 7 jours si coupure</text>
+
+    <rect x="38" y="192" width="186" height="74" rx="10" fill="#f1f3f4" stroke="#90a4ae" stroke-width="1.4"/>
+    <text x="54" y="220" font-size="14.5" font-weight="700" fill="#546e7a">Image effacée</text>
+    <text x="54" y="243">Jamais écrite sur disque</text>
+
+    <rect x="242" y="192" width="186" height="74" rx="10" fill="#ffffff" stroke="#90a4ae" stroke-width="1.4"/>
+    <text x="258" y="220" font-size="14.5" font-weight="700" fill="#37474f">Écran du module</text>
+    <text x="258" y="243">Détections en direct</text>
+
+    <rect x="446" y="192" width="186" height="74" rx="10" fill="#ffffff" stroke="#90a4ae" stroke-width="1.4"/>
+    <text x="462" y="220" font-size="14.5" font-weight="700" fill="#37474f">Interface locale</text>
+    <text x="462" y="243">Compteurs, état, réglages</text>
+  </g>
+
+  <g stroke="#5b6b7b" stroke-width="1.7" fill="none" marker-end="url(#a)">
+    <line x1="224" y1="108" x2="240" y2="108"/>
+    <line x1="428" y1="108" x2="444" y2="108"/>
+    <line x1="632" y1="108" x2="648" y2="108"/>
+    <line x1="131" y1="154" x2="131" y2="190"/>
+    <line x1="335" y1="154" x2="335" y2="190"/>
+    <line x1="539" y1="154" x2="539" y2="190"/>
+    <line x1="743" y1="154" x2="743" y2="338"/>
+    <line x1="650" y1="376" x2="634" y2="376"/>
+  </g>
+
+  <text x="733" y="308" font-size="12" font-weight="600" fill="#37474f" text-anchor="end">HTTPS · comptages uniquement</text>
+
+  <rect x="650" y="340" width="186" height="72" rx="10" fill="#eaf6ee" stroke="#2e7d32" stroke-width="1.6"/>
+  <text x="666" y="370" font-size="14" font-weight="700" fill="#2e7d32">Plateforme AirCarto</text>
+  <text x="666" y="393" font-size="12.5" fill="#37474f">Stockage des comptages</text>
+
+  <rect x="38" y="340" width="594" height="72" rx="10" fill="#ffffff" stroke="#2e7d32" stroke-width="1.4"/>
+  <line x1="236" y1="352" x2="236" y2="400" stroke="#cfd8dc"/>
+  <line x1="434" y1="352" x2="434" y2="400" stroke="#cfd8dc"/>
+  <g text-anchor="middle">
+    <text x="137" y="371" font-size="14.5" font-weight="700" fill="#37474f">Application</text>
+    <text x="137" y="393" font-size="12.5" fill="#37474f">Cyan Sensor</text>
+    <text x="335" y="371" font-size="14.5" font-weight="700" fill="#37474f">Tableau de bord</text>
+    <text x="335" y="393" font-size="12.5" fill="#37474f">moduleair.fr</text>
+    <text x="533" y="371" font-size="14.5" font-weight="700" fill="#37474f">API</text>
+    <text x="533" y="393" font-size="12.5" fill="#37474f">JSON ou CSV</text>
+  </g>
+</svg>

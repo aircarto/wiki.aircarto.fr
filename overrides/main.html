@@ -3,7 +3,7 @@
 {% block content %}
   {{ super() }}
 
-  <h2 id="__comments">Questions / Commentaires</h2>
+  <h2 id="__comments">{% if config.theme.language == "en" %}Questions / Comments{% else %}Questions / Commentaires{% endif %}</h2>
   <script
     src="https://giscus.app/client.js"
     data-repo="aircarto/wiki.aircarto.fr"
@@ -16,7 +16,7 @@
     data-emit-metadata="0"
     data-input-position="top"
     data-theme="light"
-    data-lang="fr"
+    data-lang="{{ config.theme.language or 'fr' }}"
     data-loading="lazy"
     crossorigin="anonymous"
     async>

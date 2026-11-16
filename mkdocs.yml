@@ -35,6 +35,26 @@ extra_css:
 plugins:
   - search:
       lang: fr
+  # Wiki bilingue : page.md = français (défaut, URL inchangées),
+  # page.en.md = anglais (servie sous /en/). Une page sans traduction
+  # s'affiche en français dans la version anglaise (fallback).
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: fr
+          default: true
+          name: Français
+          build: true
+        - locale: en
+          name: English
+          build: true
+          site_description: AirCarto Wiki - Documentation and resources
+          nav_translations:
+            Accueil: Home
+            Logiciels: Software
 
 markdown_extensions:
   - admonition
@@ -59,10 +79,14 @@ nav:
   - ModuleAir:
     - WiFi: moduleair-wifi/index.md
     - Pro: moduleair-pro/index.md
-    - Light: moduleair-light/index.md
     - Mini: moduleair-mini/index.md
   - NebuleAir:
     - WiFi: nebuleair-wifi/index.md
     - Pro: nebuleair-pro/index.md
+    - Pro Bruit: nebuleair-pro/bruit.md
   - Edu Kit: edukit/index.md
   - MobileAir: mobileair/index.md
+  - ModuleTraffic: moduletraffic/index.md
+  - Logiciels:
+    - OpenAirMap: openairmap/index.md
+    - Cyan Sensor: cyan-sensor/index.md

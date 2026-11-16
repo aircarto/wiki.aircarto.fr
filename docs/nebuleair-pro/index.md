@@ -51,6 +51,8 @@ Des capteurs supplémentaires peuvent être ajoutés pour étendre les capacité
 
 ![NSRT mk4](../assets/images/capteurBruit.png){ width="200" }
 
+Toutes les caractéristiques de la version bruit (mesures, transmission, installation en extérieur) : voir [NebuleAir Pro Bruit](bruit.md).
+
 ### Boîtier
 
 - **Boîtier principal** : Takachi WP15-21-6G — **150 x 210 x 55 mm**
@@ -81,11 +83,41 @@ Le NebuleAir Pro peut être alimenté de deux manières :
 
 Pour les déploiements autonomes (sans accès au secteur), nous travaillons avec notre partenaire **[Re-Lion Factory](https://re-lion-factory.com/)** sur des **« powerbox »** : des boîtiers d'alimentation autonomes associant une **batterie** et un **panneau solaire**.
 
-Le principe est simple : le panneau solaire recharge la batterie en journée, qui alimente à son tour le NebuleAir Pro en continu, y compris la nuit et lors des périodes peu ensoleillées. La capacité de la batterie et la puissance du panneau sont dimensionnées en fonction de la consommation du capteur (voir [Consommation électrique](#consommation-electrique)) afin de garantir un fonctionnement permanent, sans intervention ni raccordement filaire.
+Le principe est simple : le panneau solaire recharge la batterie en journée, qui alimente à son tour le NebuleAir Pro en continu, y compris la nuit et lors des périodes peu ensoleillées. La capacité de la batterie et la puissance du panneau sont dimensionnées en fonction de la consommation du capteur (voir [Consommation électrique](#consommation-electrique)), sans intervention ni raccordement filaire.
 
 Cette solution permet d'installer le capteur sur des sites isolés (mâts, zones rurales, chantiers, etc.) où aucune source d'alimentation n'est disponible.
 
 ![Alimentation solaire autonome du NebuleAir Pro (powerbox Re-Lion Factory)](../assets/images/alim-solairenebuleairpro.jpeg){ width="100%" }
+
+Le kit solaire du NebuleAir Pro comprend un **panneau solaire monocristallin 50 W** (67 x 46 cm) avec son support de fixation sur poteau incliné à 45°, et la batterie **Solar Powerbox PERF 120** de Re-Lion :
+
+| Caractéristique | Solar Powerbox PERF 120 |
+|-----------------|-------------------------|
+| Batterie | Lithium-ion NMC, 120 Wh, 11,1 V (3S / 10,8 Ah) |
+| Cellules | Cellules issues de la mobilité électrique, testées et qualifiées une à une en France par Re-Lion |
+| Gestion | Régulation de charge solaire et BMS (protection de la batterie) intégrés |
+| Sorties | 5 V régulé et 12 V, connecteurs industriels vissés et verrouillables, câbles fournis |
+| Entrée solaire | 12 V nominal (Voc < 28 V), protection contre l'inversion de polarité |
+| Étanchéité | **IP65**, usage extérieur |
+| Dimensions | **270 x 150 x 85 mm** (boîtier seul) ; **270 x 185 x 108 mm** avec l'embase et la fixation sur poteau |
+| Température de fonctionnement | -20 °C à +60 °C |
+| Fixation | Fixation sur poteau incluse (vis inox), colliers non fournis |
+
+![Dimensions de la Solar Powerbox PERF 120 (Re-Lion)](../assets/images/powerbox_reLion_dimensions.jpg){ width="100%" }
+
+![Patte de fixation sur poteau de la powerbox (cotes en mm)](../assets/images/powerbox_reLion_fixation.jpg){ width="400" }
+
+#### Autonomie attendue
+
+Re-Lion a simulé le fonctionnement de la powerbox à partir des données d'ensoleillement réelles depuis 2005. Pour une consommation moyenne de **1,75 W** (NebuleAir Pro en version PM) et un panneau de **50 W** :
+
+| Lieu | Année typique | Pire année depuis 2005 |
+|------|---------------|------------------------|
+| Marseille | Aucune coupure (charge minimale 14 %) | 14 h de coupure sur l'année (99,5 % de disponibilité) |
+| Lille | 210 h de coupure sur l'année (92,7 % de disponibilité) | 469 h de coupure sur l'année (83,7 % de disponibilité) |
+
+!!! warning "Coupures possibles en hiver"
+    La charge de la batterie dépend de l'ensoleillement, donc du lieu, de l'orientation du panneau et de la saison. De courtes coupures restent possibles lors des longues périodes peu ensoleillées, surtout en hiver et dans le nord de la France. Re-Lion peut faire une simulation dédiée pour un site précis.
 
 ### Consommation électrique
 

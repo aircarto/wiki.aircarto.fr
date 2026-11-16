@@ -54,7 +54,7 @@ De série, le ModuleAir WiFi embarque deux capteurs de référence :
 !!! info "Changement de capteur CO₂ depuis septembre 2026"
     Les ModuleAir produits **à partir de septembre 2026** embarquent le **Senseair S88** à la place du **MH-Z19C** (Winsen) monté sur les versions précédentes. Les capteurs déjà installés continuent de fonctionner **sans aucune intervention** : le firmware reconnaît seul le modèle branché. Voir [Dioxyde de carbone (CO₂)](#dioxyde-de-carbone-co2-senseair-s88).
 
-En **option**, une sonde **BME280** (température, humidité, pression) peut être ajoutée en version déportée — voir [Les capteurs en détail](#les-capteurs-en-detail).
+En **option**, on peut ajouter une **sonde COV** (composés organiques volatils) et une sonde **BME280** (température, humidité, pression) en version déportée — voir [Les capteurs en détail](#les-capteurs-en-detail).
 
 !!! note "Capteurs détectés automatiquement"
     Le ModuleAir détecte les capteurs présents à chaque cycle de mesure. Un capteur peut être branché ou débranché à chaud, et chaque capteur peut être **activé ou désactivé** individuellement depuis le dashboard web (voir [Réglages et fonctionnalités](#reglages-et-fonctionnalites)). Seules les mesures des capteurs présents et activés sont affichées et transmises.
@@ -126,7 +126,7 @@ Mesure réalisée sur USB 5 V avec un power profiler (~15 secondes en fonctionne
 
 ## Les capteurs en détail
 
-De série, le ModuleAir WiFi mesure les **deux paramètres clés de la qualité de l'air intérieur** : les **particules fines** et le **CO₂**, à l'aide de capteurs de référence. Une sonde de **température / humidité / pression** peut être ajoutée en option (voir plus bas).
+De série, le ModuleAir WiFi mesure les **deux paramètres clés de la qualité de l'air intérieur** : les **particules fines** et le **CO₂**, à l'aide de capteurs de référence. Une **sonde COV** et une sonde de **température / humidité / pression** peuvent être ajoutées en option (voir plus bas).
 
 ### Particules fines — NextPM (Tera Sensor)
 
@@ -183,6 +183,29 @@ Depuis **septembre 2026**, le ModuleAir mesure le CO₂ avec le **[S88](https://
     | Compensation | en température |
     | Temps de chauffe | ~1 à 3 min |
     | Interface | UART (sortie série) |
+
+### Composés organiques volatils (COV) — sonde CCS811 (en option)
+
+Les **COV** (composés organiques volatils) sont des gaz émis par de nombreuses sources de la maison : **produits ménagers**, **peintures**, colles et vernis, **meubles neufs**, parfums d'intérieur, **bougies** et encens, **cuisine**… Certains sont irritants ou nocifs à forte dose. Comme le CO₂, ils s'accumulent quand une pièce est mal aérée.
+
+Le ModuleAir peut recevoir en option une sonde **CCS811** (ams / ScioSense). C'est un capteur à **oxyde métallique** (MOX) : une petite couche sensible, chauffée, change de résistance au contact des COV. Le capteur en déduit un taux de **COV totaux** (*TVOC*), affiché en **ppb** (parties par milliard) sur l'écran LED, dans le dashboard et dans les données.
+
+| Caractéristique | Valeur |
+|-----------------|--------|
+| Principe | Capteur à oxyde métallique (MOX), chauffé |
+| Mesure | COV totaux (TVOC) |
+| Gamme | 0 – 1 187 ppb |
+| Chauffe à chaque mise en route | ~20 min |
+| Stabilisation à la première utilisation | ~48 h de fonctionnement continu |
+| Interface | I²C |
+
+!!! warning "Le temps de chauffe"
+    La sonde doit chauffer avant de mesurer : **à chaque mise en route, elle affiche 0 pendant une vingtaine de minutes**, c'est normal. À la **première utilisation**, laissez le capteur **branché en continu** : ses valeurs se stabilisent au bout d'environ **48 heures**.
+
+!!! tip "Regarder les variations, pas les chiffres"
+    Ce capteur est fait pour suivre l'**évolution** des COV, pas pour donner une valeur absolue précise. Il montre très bien **quand les COV montent** (ménage, cuisine, bougie, peinture…) et **quand ils redescendent** après avoir aéré. En revanche, deux sondes placées côte à côte peuvent afficher des chiffres différents : comparez les mesures d'un même capteur dans le temps plutôt que des valeurs entre elles.
+
+La sonde COV est **activée en atelier** sur les ModuleAir livrés avec cette option. Elle peut être activée ou désactivée à tout moment depuis le dashboard web, carte **Capteurs actifs** (voir [Réglages et fonctionnalités](#reglages-et-fonctionnalites)).
 
 ### Température, humidité, pression — sonde BME280 (en option)
 
@@ -347,7 +370,7 @@ Concrètement :
 - **↑ rouge + ↓ verte** → internet marche (↓ verte) mais l'envoi au serveur échoue (↑ rouge) : c'est **le serveur AirCarto** qui est en cause, **pas votre WiFi**.
 
 !!! tip "Hors ligne, le capteur continue de mesurer"
-    Même sans internet, l'écran continue d'afficher les mesures en direct. Seul l'**historique en ligne** sur monmoduleair.fr est suspendu tant que la connexion n'est pas rétablie.
+    Même sans internet, l'écran continue d'afficher les mesures en direct. Seul l'**historique en ligne** sur [moduleair.fr](https://moduleair.fr/monModuleAir/) est suspendu tant que la connexion n'est pas rétablie.
 
 ### Seuils de couleur
 
@@ -460,11 +483,11 @@ La mise à jour prend environ 30 secondes. La progression est affichée à la fo
 
 Le ModuleAir s'utilise de deux manières, selon qu'il dispose ou non d'un accès à internet.
 
-### Connecté à internet — l'historique sur monmoduleair.fr
+### Connecté à internet — l'historique sur moduleair.fr
 
 Quand le capteur est connecté à un WiFi **disposant d'un accès internet**, il transmet ses mesures **toutes les 60 secondes** vers les serveurs AirCarto. Les données **remontent** alors dans le cloud, où elles sont **historisées** et consultables à distance, depuis n'importe où :
 
-[:material-chart-line: Consulter mes données sur monmoduleair.fr](https://monmoduleair.fr){ .md-button }
+[:material-chart-line: Consulter mes données sur moduleair.fr](https://moduleair.fr/monModuleAir/){ .md-button }
 
 C'est le mode d'usage normal : vous pouvez suivre l'évolution de la qualité de l'air sous forme de graphiques, sur la durée.
 
