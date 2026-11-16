@@ -30,7 +30,7 @@ theme:
     - content.code.copy
 
 extra_css:
-  - assets/stylesheets/custom.css?v=2
+  - assets/stylesheets/custom.css?v=3
 
 plugins:
   - search:
@@ -55,6 +55,7 @@ plugins:
           nav_translations:
             Accueil: Home
             Logiciels: Software
+            Modèles 3D: 3D models
 
 markdown_extensions:
   - admonition
@@ -87,6 +88,7 @@ nav:
   - Edu Kit: edukit/index.md
   - MobileAir: mobileair/index.md
   - ModuleTraffic: moduletraffic/index.md
+  - Modèles 3D: modeles-3d/index.md
   - Logiciels:
     - OpenAirMap: openairmap/index.md
     - Cyan Sensor: cyan-sensor/index.md

@@ -58,3 +58,21 @@
   height: 100%;
   border: 0;
 }
+
+/* Visualiseur 3D (page Modèles 3D, <model-viewer>) */
+.md-typeset .viewer-3d {
+  margin: 1.2em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--md-code-bg-color);
+}
+.md-typeset .viewer-3d model-viewer {
+  display: block;
+  width: 100%;
+  height: 480px;
+  --poster-color: transparent;
+}
+@media screen and (max-width: 600px) {
+  .md-typeset .viewer-3d model-viewer { height: 360px; }
+}
+
