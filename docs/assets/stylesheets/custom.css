@@ -2,6 +2,12 @@
 [data-md-color-scheme="slate"] .md-tabs {
   background-color: #2b2b2b;
 }
+/* Mode sombre : la couleur primaire « white » met le texte de la barre du haut
+   en noir ; on l'éclaircit pour qu'il reste lisible sur le gris foncé. */
+[data-md-color-scheme="slate"] {
+  --md-primary-bg-color: #e8e8e8;
+  --md-primary-bg-color--light: rgba(232, 232, 232, 0.7);
+}
 
 /* Paragraphe vide laissé par md_in_html autour des blocs <div> bruts */
 .md-typeset p:empty {
