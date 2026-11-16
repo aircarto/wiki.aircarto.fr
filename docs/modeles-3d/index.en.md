@@ -36,3 +36,28 @@ The **"Show the airflow"** box shows the path of the air: it enters from below t
 | AirVent — nut | Screws onto the cap from the inside, on either side of the 3 mm wall | [vent_ecrou_v10.stl](../assets/3d_files/nebuleair_pro/vent_ecrou_v10.stl) |
 
 Hole to drill in the enclosure for one AirVent: **Ø16 mm**.
+
+## Solar panel and battery
+
+On a site without mains power, the NebuleAir Pro runs on a **solar panel** and a **battery**, mounted on the same pole as the sensor.
+
+<div class="viewer-3d">
+<model-viewer src="../../assets/3d_files/kit_solaire/nebuleair_pro_kit_solaire_v1.glb?v=04f06b5e"
+  alt="NebuleAir Pro with solar panel and battery on a pole, in 3D"
+  camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
+  camera-orbit="40deg 78deg auto" shadow-intensity="1" exposure="1.0"
+  ar ar-modes="webxr scene-viewer quick-look">
+</model-viewer>
+</div>
+
+| Part | Specifications |
+|---|---|
+| Solar panel | 50 W, 12 V, monocrystalline · 670 × 460 × 30 mm · 3.2 kg |
+| Panel mount | Aluminium, 45° tilt, fixed with 2 stainless hose clamps (pole up to Ø80 mm) |
+| Battery | RE-LION® Solar Powerbox PERF 120 · 120 Wh lithium-ion (11.1 V) · built-in solar charger and BMS · IP65 · 270 × 150 × 85 mm |
+| Wiring | 5 V and 12 V outputs on screw-lock connectors; the sensor is connected to the 12 V output through its cable gland |
+
+**Autonomy.** The NebuleAir Pro draws about **0.5 W**: the battery alone lasts about ten days without sun (120 Wh ÷ 0.5 W ≈ 240 h). According to RE-LION® simulations based on sunshine data since 2005, a 0.6 W device runs all year without interruption, even in the worst year: in Marseille with a panel from 25 W, in Lille with the 50 W panel.
+
+!!! note "Simplified models"
+    The panel, its mount and the battery are **simplified models redrawn by AirCarto** from the manufacturers' public dimensions, for display only.

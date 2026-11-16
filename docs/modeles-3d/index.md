@@ -36,3 +36,28 @@ La case **« Voir le flux d'air »** montre le trajet de l'air : il entre par le
 | AirVent — écrou | Se visse à l'intérieur sur le capot, de part et d'autre de la paroi (3 mm) | [vent_ecrou_v10.stl](../assets/3d_files/nebuleair_pro/vent_ecrou_v10.stl) |
 
 Perçage du boîtier pour un AirVent : **Ø16 mm**.
+
+## Panneau solaire et batterie
+
+Sur un site sans courant, le NebuleAir Pro est alimenté par un **panneau solaire** et une **batterie**, fixés sur le même poteau que le capteur.
+
+<div class="viewer-3d">
+<model-viewer src="../assets/3d_files/kit_solaire/nebuleair_pro_kit_solaire_v1.glb?v=04f06b5e"
+  alt="NebuleAir Pro avec panneau solaire et batterie sur un poteau, en 3D"
+  camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
+  camera-orbit="40deg 78deg auto" shadow-intensity="1" exposure="1.0"
+  ar ar-modes="webxr scene-viewer quick-look">
+</model-viewer>
+</div>
+
+| Élément | Caractéristiques |
+|---|---|
+| Panneau solaire | 50 W, 12 V, monocristallin · 670 × 460 × 30 mm · 3,2 kg |
+| Support du panneau | Aluminium, incliné à 45°, fixé par 2 colliers inox (poteau jusqu'à Ø80 mm) |
+| Batterie | RE-LION® Solar Powerbox PERF 120 · lithium-ion 120 Wh (11,1 V) · régulateur solaire et BMS intégrés · IP65 · 270 × 150 × 85 mm |
+| Raccordement | Sorties 5 V et 12 V sur connecteurs à vis ; le capteur est branché sur le 12 V, par son presse-étoupe |
+
+**Autonomie.** Le NebuleAir Pro consomme environ **0,5 W** : la batterie seule tient une dizaine de jours sans soleil (120 Wh ÷ 0,5 W ≈ 240 h). Selon les simulations de RE-LION® sur les données d'ensoleillement depuis 2005, un appareil de 0,6 W fonctionne toute l'année sans coupure, même la pire année : à Marseille dès un panneau de 25 W, à Lille avec le panneau de 50 W.
+
+!!! note "Modèles simplifiés"
+    Le panneau, son support et la batterie sont des modèles **simplifiés redessinés par AirCarto** à partir des dimensions publiques des fabricants, pour la visualisation.

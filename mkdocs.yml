@@ -95,3 +95,7 @@ nav:
   - Logiciels:
     - OpenAirMap: openairmap/index.md
     - Cyan Sensor: cyan-sensor/index.md
+
+# Photos de référence des vendeurs (copie dans Nextcloud Boitiers_3D/Kit_solaire) : jamais publiées
+exclude_docs: |
+  assets/3d_files/solar_panels/

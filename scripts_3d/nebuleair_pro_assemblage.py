@@ -403,8 +403,9 @@ def paint(m, rgba, name=None):
     return m
 
 
-def main():
-    p = BOXES[REF]
+def sensor_scene(p):
+    """Le capteur seul (boîtier percé, AirVent, pattes, presse-étoupe, NextPM),
+    repère du boîtier en mm. Rend (scène, Tn = placement du NextPM)."""
     body, cover = build(p)
     W = p["width"] / 2
     body_cuts = [hole_cutter(f, a, b, p) for _, f, (a, b) in VENTS if f in ("droite", "gauche")]
@@ -466,22 +467,20 @@ def main():
         lo, hi = mesh.bounds
         print(f"{part}: X {lo[0]:.1f}..{hi[0]:.1f}  Y {lo[1]:.1f}..{hi[1]:.1f}  Z {lo[2]:.1f}..{hi[2]:.1f}")
 
-    flow = flow_paths(p, Tn)
+    return scene, Tn
 
-    # Centre et encombrement du CAPTEUR seul (sans le poteau) : la vue 3D tourne
-    # autour du capteur et les cotes ne comptent pas le décor.
-    centre = scene.bounds.mean(axis=0)
-    overall = scene.bounds[1] - scene.bounds[0]
 
-    # --- Poteau + 2 colliers (un par patte) ---
+def add_pole(scene, p, length=POLE_LEN, y_mid=0.0):
+    """Poteau Ø POLE_D calé dans les pattes du capteur + 2 colliers ; rend
+    l'axe du poteau (Z, mm) et son rayon."""
     from shapely.geometry import Polygon
     profile = Polygon([(-14, 0), (14, 0), (14, -12), (10.2, -12), (5, -7.4),
                        (-5, -7.4), (-10.2, -12), (-14, -12)])  # = takachi_wp.bracket_wpmb_m4
     r = POLE_D / 2
     zc = pole_centre_z(profile, r)
-    pole = trimesh.creation.cylinder(radius=r, height=POLE_LEN, sections=96)
+    pole = trimesh.creation.cylinder(radius=r, height=length, sections=96)
     pole.apply_transform(trimesh.transformations.rotation_matrix(np.pi / 2, [1, 0, 0]))
-    pole.apply_translation([0, 0, zc])
+    pole.apply_translation([0, y_mid, zc])
     pole.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
         baseColorFactor=COLORS["poteau"], metallicFactor=0.5, roughnessFactor=0.45))
     scene.add_geometry(pole, node_name="poteau", geom_name="poteau")
@@ -492,6 +491,21 @@ def main():
             baseColorFactor=COLORS["collier"], metallicFactor=0.8, roughnessFactor=0.3))
         scene.add_geometry(m, node_name=name, geom_name=name)
     print(f"poteau Ø{POLE_D:.0f} : axe à Z={zc:.1f} mm (dos du boîtier à Z=0)")
+    return zc, r
+
+
+def main():
+    p = BOXES[REF]
+    scene, Tn = sensor_scene(p)
+    flow = flow_paths(p, Tn)
+
+    # Centre et encombrement du CAPTEUR seul (sans le poteau) : la vue 3D tourne
+    # autour du capteur et les cotes ne comptent pas le décor.
+    centre = scene.bounds.mean(axis=0)
+    overall = scene.bounds[1] - scene.bounds[0]
+
+    # --- Poteau + 2 colliers (un par patte) ---
+    add_pole(scene, p)
 
     # Cordon d'alimentation sortant du presse-étoupe (décor, hors cotes) :
     # de l'intérieur du boîtier jusqu'à CABLE_LEN sous le chapeau.
