@@ -44,7 +44,7 @@ BAT_W, BAT_H, BAT_D = 150.0, 270.0, 85.0
 BAT_TOP_Y = -230.0
 BAT_PLATE = 3.0                                   # platine de fixation au dos
 # --- Poteau et échelle -----------------------------------------------------
-MOUNT_H = 3000.0                                  # hauteur du centre du capteur au-dessus du sol
+MOUNT_H = 1800.0                                  # hauteur du centre du capteur au-dessus du sol
 POLE_Y = (-MOUNT_H, 720.0)                        # le poteau descend jusqu'au sol
 PERSON_H = 1750.0                                 # silhouette humaine, pour l'échelle
 PERSON_POS = (430.0, -390.0)                      # (X, Z) au sol, à côté du poteau, à même distance de la caméra par défaut (40°)

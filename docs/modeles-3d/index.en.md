@@ -39,10 +39,10 @@ Hole to drill in the enclosure for one AirVent: **Ø16 mm**.
 
 ## Solar panel and battery
 
-On a site without mains power, the NebuleAir Pro runs on a **solar panel** and a **battery**, mounted on the same pole as the sensor. The sensor is shown 3 m above the ground, next to a 1.75 m human figure for scale.
+On a site without mains power, the NebuleAir Pro runs on a **solar panel** and a **battery**, mounted on the same pole as the sensor. The sensor is shown 1.80 m above the ground, next to a 1.75 m human figure for scale.
 
 <div class="viewer-3d">
-<model-viewer src="../../assets/3d_files/kit_solaire/nebuleair_pro_kit_solaire_v1.glb?v=147e295a"
+<model-viewer src="../../assets/3d_files/kit_solaire/nebuleair_pro_kit_solaire_v1.glb?v=22d61c5c"
   alt="NebuleAir Pro with solar panel and battery on a pole, in 3D"
   camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
   camera-orbit="40deg 78deg auto" shadow-intensity="1" exposure="1.0"
