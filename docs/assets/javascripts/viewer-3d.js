@@ -72,7 +72,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function setupDims() {
       if (dimsReady) return; // « load » peut se redéclencher : une seule fois
       dimsReady = true;
-      var url = (mv.getAttribute("src") || "").split("?")[0].replace(/\.glb$/, ".dims.json");
+      // même version que le GLB (?v=…), pour ne pas relire d'anciennes cotes en cache
+      var url = (mv.getAttribute("src") || "").replace(/\.glb(\?|$)/, ".dims.json$1");
       fetch(url).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
         if (!d || !d.boitier) return;
         var lo = d.boitier.min, hi = d.boitier.max, mm = d.boitier.mm;

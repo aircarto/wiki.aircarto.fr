@@ -385,6 +385,22 @@ def main():
     scene.export(out)
     n = add_opening_animation(out)
     print("->", out, f"{out.stat().st_size / 1024:.0f} Ko ; animation « ouverture » sur {n} nœuds")
+    stamp_pages(out)
+
+
+def stamp_pages(glb):
+    """Ajoute « ?v=<empreinte du GLB> » à son adresse dans les pages du wiki :
+    sans ça, le navigateur garde l'ancien modèle en cache."""
+    import hashlib
+    import re
+    v = hashlib.md5(glb.read_bytes()).hexdigest()[:8]
+    pat = re.compile(re.escape(glb.name) + r'(\?v=\w+)?"')
+    for page in sorted((ROOT / "docs/modeles-3d").glob("index*.md")):
+        txt = page.read_text()
+        new = pat.sub(f'{glb.name}?v={v}"', txt)
+        if new != txt:
+            page.write_text(new)
+            print("   version", v, "->", page.relative_to(ROOT))
 
 
 if __name__ == "__main__":
