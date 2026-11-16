@@ -12,7 +12,7 @@ Visualisez nos capteurs en 3D, directement dans le navigateur : **faites tourner
 Version **verticale** (petite) : boîtier Takachi WP13-18-5G, capteur de particules NextPM et sonde BME280 externe. Trois aérations AirVent : une sur chaque côté et une sur la face avant. Le NextPM est fixé sous le couvercle, son tube d'entrée d'air emboîté dans l'AirVent avant : ouvrez le capteur pour le voir. Le cordon d'alimentation entre par un presse-étoupe en bas à droite. Il est présenté fixé sur un poteau de Ø60 mm par deux pattes Takachi WPMB-M4 et deux colliers de serrage.
 
 <div class="viewer-3d">
-<model-viewer data-open-m="0.13" src="../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb?v=27b4a7cc"
+<model-viewer data-open-m="0.13" src="../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb?v=53d2b9b2"
   alt="NebuleAir Pro, version verticale, en 3D"
   camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
   camera-orbit="40deg 70deg 0.72m" shadow-intensity="1" exposure="1.0"

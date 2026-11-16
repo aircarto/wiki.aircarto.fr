@@ -41,6 +41,10 @@ BOXES = {
         pcb_boss_d=4.6, pcb_boss_h=6.0, pcb_hole_d=2.0,
         # 2 trous M4 de fixation sur poteau (entraxe 156.2)
         mount_holes=[(0.0, -78.1), (0.0, 78.1)], mount_hole_d=4.3,
+        # à l'intérieur, autour de chaque trou M4 : plot Ø10 + muret rectangulaire
+        # collé à la paroi (30 de large, jusqu'à 18.5 du bord extérieur, R3)
+        mount_boss_d=10.0, mount_rim_w=30.0, mount_rim_reach=18.5,
+        mount_rim_t=1.5, mount_rim_r=3.0, mount_rim_h=8.0,
     ),
 }
 
@@ -82,11 +86,23 @@ def build(p):
     body = diff(prism(outer, hb), [prism(inner, hb, p["floor"])])
     bosses = [cyl(p["lid_boss_d"], hb - p["floor"], x, y, p["floor"]) for x, y in p["lid_screws"]]
     bosses += [cyl(p["pcb_boss_d"], p["pcb_boss_h"], x, y, p["floor"]) for x, y in p["pcb_bosses"]]
+    for x, y in p["mount_holes"]:
+        sgn = 1 if y > 0 else -1
+        y_in = sgn * (L / 2 - p["mount_rim_reach"])      # bord du muret côté intérieur
+        y_out = sgn * (L / 2 - t / 2)                      # noyé dans la paroi
+        y0, y1 = sorted((y_in, y_out))
+        rw, rt, rr = p["mount_rim_w"], p["mount_rim_t"], p["mount_rim_r"]
+        outer_rim = rounded_rect(rw, y1 - y0, rr)
+        from shapely import affinity
+        outer_rim = affinity.translate(outer_rim, x, (y0 + y1) / 2)
+        ring = outer_rim.difference(outer_rim.buffer(-rt, quad_segs=SEG // 4))
+        bosses.append(prism(ring, p["mount_rim_h"], p["floor"] - 0.01))
+        bosses.append(cyl(p["mount_boss_d"], p["mount_rim_h"], x, y, p["floor"] - 0.01))
     body = union([body] + bosses)
     holes = [cyl(p["lid_screw_hole_d"], hb + 2, x, y, -1) for x, y in p["lid_screws"]]
     holes += [cyl(p["counterbore_d"], p["counterbore_h"] + 1, x, y, -1) for x, y in p["lid_screws"]]
     holes += [cyl(p["pcb_hole_d"], p["pcb_boss_h"], x, y, p["floor"] + 1) for x, y in p["pcb_bosses"]]
-    holes += [cyl(p["mount_hole_d"], p["floor"] + 2, x, y, -1) for x, y in p["mount_holes"]]
+    holes += [cyl(p["mount_hole_d"], p["floor"] + p["mount_rim_h"] + 2, x, y, -1) for x, y in p["mount_holes"]]
     body = diff(body, holes)
 
     # --- Couvercle -----------------------------------------------------------
