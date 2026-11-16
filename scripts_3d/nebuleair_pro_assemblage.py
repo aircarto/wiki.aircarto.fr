@@ -128,7 +128,12 @@ def edges(m):
 # Animation « ouverture » : le couvercle et ce qui y est fixé s'éloignent du fond
 # (axe +Z, face avant). Pilotée par le curseur de la page Modèles 3D.
 OPEN_DISTANCE_M = 0.13
-OPEN_PREFIXES = ("boitier_couvercle", "airvent_avant", "nextpm")
+# Vue éclatée : chaque groupe de pièces avance d'une fraction de l'ouverture.
+# Le NextPM se détache du couvercle et s'arrête à mi-chemin, pour être visible.
+OPEN_GROUPS = [
+    ("ouverture_couvercle", ("boitier_couvercle", "airvent_avant"), 1.0),
+    ("ouverture_nextpm", ("nextpm",), 0.5),
+]
 
 
 def add_opening_animation(glb_path):
@@ -149,23 +154,26 @@ def add_opening_animation(glb_path):
         return len(gltf["bufferViews"]) - 1
 
     times = [0.0, 1.0]
-    moves = [[0, 0, 0], [0, 0, OPEN_DISTANCE_M]]
     acc = gltf["accessors"]
     acc.append({"bufferView": push(times), "componentType": 5126, "count": 2, "type": "SCALAR",
                 "min": [0.0], "max": [1.0]})
     t_acc = len(acc) - 1
-    acc.append({"bufferView": push(moves), "componentType": 5126, "count": 2, "type": "VEC3",
-                "min": [0, 0, 0], "max": [0, 0, OPEN_DISTANCE_M]})
-    v_acc = len(acc) - 1
 
-    roots = gltf["scenes"][0]["nodes"]
-    moving = [i for i in roots if gltf["nodes"][i].get("name", "").startswith(OPEN_PREFIXES)]
-    gltf["nodes"].append({"name": "ouverture", "translation": [0, 0, 0], "children": moving})
-    parent = len(gltf["nodes"]) - 1
-    gltf["scenes"][0]["nodes"] = [i for i in roots if i not in moving] + [parent]
-    gltf["animations"] = [{"name": "ouverture",
-                           "samplers": [{"input": t_acc, "output": v_acc, "interpolation": "LINEAR"}],
-                           "channels": [{"sampler": 0, "target": {"node": parent, "path": "translation"}}]}]
+    roots = list(gltf["scenes"][0]["nodes"])
+    samplers, channels, moved = [], [], 0
+    for group, prefixes, fraction in OPEN_GROUPS:
+        d = OPEN_DISTANCE_M * fraction
+        acc.append({"bufferView": push([[0, 0, 0], [0, 0, d]]), "componentType": 5126, "count": 2,
+                    "type": "VEC3", "min": [0, 0, 0], "max": [0, 0, d]})
+        members = [i for i in roots if gltf["nodes"][i].get("name", "").startswith(prefixes)]
+        gltf["nodes"].append({"name": group, "translation": [0, 0, 0], "children": members})
+        parent = len(gltf["nodes"]) - 1
+        roots = [i for i in roots if i not in members] + [parent]
+        samplers.append({"input": t_acc, "output": len(acc) - 1, "interpolation": "LINEAR"})
+        channels.append({"sampler": len(samplers) - 1, "target": {"node": parent, "path": "translation"}})
+        moved += len(members)
+    gltf["scenes"][0]["nodes"] = roots
+    gltf["animations"] = [{"name": "ouverture", "samplers": samplers, "channels": channels}]
     while len(binary) % 4:
         binary.append(0)
     gltf["buffers"][0]["byteLength"] = len(binary)
@@ -176,7 +184,7 @@ def add_opening_animation(glb_path):
     out += struct.pack("<II", len(js), 0x4E4F534A) + js
     out += struct.pack("<II", len(binary), 0x004E4942) + bytes(binary)
     Path(glb_path).write_bytes(out)
-    return len(moving)
+    return moved
 
 
 def paint(m, rgba):
