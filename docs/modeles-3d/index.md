@@ -3,7 +3,7 @@
 !!! warning "Page en cours de modification"
     Cette page est en cours de construction : les modèles et l'emplacement des pièces peuvent encore changer.
 
-Visualisez nos capteurs en 3D, directement dans le navigateur : **faites tourner** le modèle avec la souris ou le doigt, **zoomez** avec la molette ou en pinçant. Sur téléphone, le bouton en bas à droite affiche le capteur en réalité augmentée, posé dans votre pièce.
+Visualisez nos capteurs en 3D, directement dans le navigateur : **faites tourner** le modèle avec la souris ou le doigt, **zoomez** avec la molette ou en pinçant, et **ouvrez le capteur** avec le curseur sous le modèle. Sur téléphone, le bouton en bas à droite affiche le capteur en réalité augmentée, posé dans votre pièce.
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 
@@ -15,9 +15,10 @@ Version **verticale** (petite) : boîtier Takachi WP13-18-5G, capteur de particu
 <model-viewer src="../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb"
   alt="NebuleAir Pro, version verticale, en 3D"
   camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
-  camera-orbit="35deg 70deg auto" shadow-intensity="1" exposure="1.1"
+  camera-orbit="35deg 70deg 0.58m" shadow-intensity="1" exposure="1.0"
   ar ar-modes="webxr scene-viewer quick-look">
 </model-viewer>
+<div class="viewer-3d-open"><label>Ouvrir le capteur <input type="range" min="0" max="1" step="0.01" value="0"></label></div>
 </div>
 
 !!! note "Boîtier"

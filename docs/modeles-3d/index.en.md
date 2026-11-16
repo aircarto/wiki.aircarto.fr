@@ -3,7 +3,7 @@
 !!! warning "Page under construction"
     This page is being worked on: the models and the position of the parts may still change.
 
-View our sensors in 3D, right in your browser: **rotate** the model with your mouse or finger, **zoom** with the wheel or by pinching. On a phone, the button at the bottom right shows the sensor in augmented reality, placed in your room.
+View our sensors in 3D, right in your browser: **rotate** the model with your mouse or finger, **zoom** with the wheel or by pinching, and **open the sensor** with the slider below the model. On a phone, the button at the bottom right shows the sensor in augmented reality, placed in your room.
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 
@@ -15,9 +15,10 @@ View our sensors in 3D, right in your browser: **rotate** the model with your mo
 <model-viewer src="../../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb"
   alt="NebuleAir Pro, vertical version, in 3D"
   camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
-  camera-orbit="35deg 70deg auto" shadow-intensity="1" exposure="1.1"
+  camera-orbit="35deg 70deg 0.58m" shadow-intensity="1" exposure="1.0"
   ar ar-modes="webxr scene-viewer quick-look">
 </model-viewer>
+<div class="viewer-3d-open"><label>Open the sensor <input type="range" min="0" max="1" step="0.01" value="0"></label></div>
 </div>
 
 !!! note "Enclosure"

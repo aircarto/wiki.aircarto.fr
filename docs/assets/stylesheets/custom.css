@@ -85,4 +85,19 @@
 @media screen and (max-width: 600px) {
   .md-typeset .viewer-3d model-viewer { height: 360px; }
 }
+.md-typeset .viewer-3d-open {
+  padding: 0.5rem 1rem 0.7rem;
+  font-size: 0.75rem;
+  color: #fff;
+}
+.md-typeset .viewer-3d-open label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.md-typeset .viewer-3d-open input[type=range] {
+  flex: 1;
+  max-width: 320px;
+  accent-color: var(--md-accent-fg-color);
+}
 

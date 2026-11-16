@@ -13,6 +13,8 @@ Repère du boîtier (mm) : origine au centre du fond, X = largeur (130),
 Y = longueur (175, vertical une fois posé : +Y vers le haut), Z = profondeur
 (dos contre le poteau en Z=0, couvercle en face avant en Z=45).
 """
+import json
+import struct
 from pathlib import Path
 
 import numpy as np
@@ -43,8 +45,8 @@ VENTS = [
 ]
 
 COLORS = {
-    "corps": [205, 207, 208, 255],
-    "couvercle": [222, 224, 225, 255],
+    "corps": [128, 135, 144, 255],
+    "couvercle": [140, 147, 156, 255],
     "vent_top": [45, 52, 60, 255],
     "vent_ecrou": [70, 78, 88, 255],
 }
@@ -82,6 +84,77 @@ def hole_cutter(face, a, b, p):
     return c
 
 
+EDGE_COLOR = [40, 45, 52, 255]
+EDGE_ANGLE_DEG = 25  # arêtes vives au-delà de cet angle entre deux faces
+
+
+def edges(m):
+    """Arêtes vives du maillage, en traits (lignes glTF), pour lire les formes."""
+    sel = m.face_adjacency_angles > np.radians(EDGE_ANGLE_DEG)
+    # Traits décalés de 0,15 mm vers l'extérieur : sinon ils se confondent avec
+    # la surface et s'affichent en pointillés.
+    # (normales calculées sur une copie : sinon trimesh les exporte et lisse
+    # l'ombrage des faces planes)
+    v = m.vertices + m.copy().vertex_normals * 0.15
+    path = trimesh.load_path(v[m.face_adjacency_edges[sel]])
+    path.colors = np.tile(EDGE_COLOR, (len(path.entities), 1))
+    return path
+
+
+# Animation « ouverture » : le couvercle et ce qui y est fixé s'éloignent du fond
+# (axe +Z, face avant). Pilotée par le curseur de la page Modèles 3D.
+OPEN_DISTANCE_M = 0.07
+OPEN_PREFIXES = ("boitier_couvercle", "airvent_avant")
+
+
+def add_opening_animation(glb_path):
+    """Ajoute au GLB un nœud parent animé (translation) pour ouvrir le boîtier."""
+    data = Path(glb_path).read_bytes()
+    jlen = struct.unpack("<I", data[12:16])[0]
+    gltf = json.loads(data[20:20 + jlen])
+    blen = struct.unpack("<I", data[20 + jlen:24 + jlen])[0]
+    binary = bytearray(data[28 + jlen:28 + jlen + blen])
+
+    def push(arr):
+        while len(binary) % 4:
+            binary.append(0)
+        off = len(binary)
+        raw = np.asarray(arr, dtype="<f4").tobytes()
+        binary.extend(raw)
+        gltf["bufferViews"].append({"buffer": 0, "byteOffset": off, "byteLength": len(raw)})
+        return len(gltf["bufferViews"]) - 1
+
+    times = [0.0, 1.0]
+    moves = [[0, 0, 0], [0, 0, OPEN_DISTANCE_M]]
+    acc = gltf["accessors"]
+    acc.append({"bufferView": push(times), "componentType": 5126, "count": 2, "type": "SCALAR",
+                "min": [0.0], "max": [1.0]})
+    t_acc = len(acc) - 1
+    acc.append({"bufferView": push(moves), "componentType": 5126, "count": 2, "type": "VEC3",
+                "min": [0, 0, 0], "max": [0, 0, OPEN_DISTANCE_M]})
+    v_acc = len(acc) - 1
+
+    roots = gltf["scenes"][0]["nodes"]
+    moving = [i for i in roots if gltf["nodes"][i].get("name", "").startswith(OPEN_PREFIXES)]
+    gltf["nodes"].append({"name": "ouverture", "translation": [0, 0, 0], "children": moving})
+    parent = len(gltf["nodes"]) - 1
+    gltf["scenes"][0]["nodes"] = [i for i in roots if i not in moving] + [parent]
+    gltf["animations"] = [{"name": "ouverture",
+                           "samplers": [{"input": t_acc, "output": v_acc, "interpolation": "LINEAR"}],
+                           "channels": [{"sampler": 0, "target": {"node": parent, "path": "translation"}}]}]
+    while len(binary) % 4:
+        binary.append(0)
+    gltf["buffers"][0]["byteLength"] = len(binary)
+
+    js = json.dumps(gltf, separators=(",", ":")).encode()
+    js += b" " * (-len(js) % 4)
+    out = struct.pack("<III", 0x46546C67, 2, 12 + 8 + len(js) + 8 + len(binary))
+    out += struct.pack("<II", len(js), 0x4E4F534A) + js
+    out += struct.pack("<II", len(binary), 0x004E4942) + bytes(binary)
+    Path(glb_path).write_bytes(out)
+    return len(moving)
+
+
 def paint(m, rgba):
     m.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
         baseColorFactor=rgba, metallicFactor=0.0, roughnessFactor=0.6))
@@ -105,6 +178,8 @@ def main():
     scene = trimesh.Scene()
     scene.add_geometry(paint(body, COLORS["corps"]), node_name="boitier_corps", geom_name="boitier_corps")
     scene.add_geometry(paint(cover, COLORS["couvercle"]), node_name="boitier_couvercle", geom_name="boitier_couvercle")
+    scene.add_geometry(edges(body), node_name="boitier_corps_aretes", geom_name="boitier_corps_aretes")
+    scene.add_geometry(edges(cover), node_name="boitier_couvercle_aretes", geom_name="boitier_couvercle_aretes")
     for name, face, (a, b) in VENTS:
         T = frame(face, a, b, p)
         for part, mesh in (("capot", top), ("ecrou", nut)):
@@ -112,6 +187,7 @@ def main():
             m.apply_transform(T)
             key = "vent_top" if part == "capot" else "vent_ecrou"
             scene.add_geometry(paint(m, COLORS[key]), node_name=f"{name}_{part}", geom_name=f"{name}_{part}")
+            scene.add_geometry(edges(m), node_name=f"{name}_{part}_aretes", geom_name=f"{name}_{part}_aretes")
 
     # glTF : Y vers le haut (déjà le cas : +Y = haut du capteur posé), en mètres.
     # On centre le modèle pour que la vue 3D tourne autour du capteur.
@@ -119,7 +195,8 @@ def main():
     scene.apply_scale(0.001)
     out = DIR / f"nebuleair_pro_{REF}_v1.glb"
     scene.export(out)
-    print("->", out, f"{out.stat().st_size / 1024:.0f} Ko")
+    n = add_opening_animation(out)
+    print("->", out, f"{out.stat().st_size / 1024:.0f} Ko ; animation « ouverture » sur {n} nœuds")
 
 
 if __name__ == "__main__":
