@@ -30,10 +30,10 @@ theme:
     - content.code.copy
 
 extra_css:
-  - assets/stylesheets/custom.css?v=8
+  - assets/stylesheets/custom.css?v=9
 
 extra_javascript:
-  - assets/javascripts/viewer-3d.js?v=10
+  - assets/javascripts/viewer-3d.js?v=12
 
 plugins:
   - search:

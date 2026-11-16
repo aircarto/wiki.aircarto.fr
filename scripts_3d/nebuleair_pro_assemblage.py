@@ -235,6 +235,138 @@ def add_opening_animation(glb_path):
     return moved
 
 
+# --- Flux d'air (illustration, pas un calcul CFD) ---------------------------
+# Trajet : sous le capot de l'AirVent avant (ouverture vers le bas) -> tube de
+# l'AirVent -> tube d'entrée du NextPM -> ventilateur -> sortie latérale du
+# NextPM -> intérieur du boîtier -> AirVent latérales -> dehors, vers le bas.
+FLOW_PERIOD_S = 5.0     # durée d'un tour de l'animation « flux »
+FLOW_PARTICLES = 45     # particules par trajet
+FLOW_PARTICLE_D = 3.4   # mm
+FLOW_COLOR = [0, 110, 255, 255]
+
+
+def _chaikin(pts, n=3):
+    pts = np.asarray(pts, float)
+    for _ in range(n):
+        q = 0.75 * pts[:-1] + 0.25 * pts[1:]
+        r = 0.25 * pts[:-1] + 0.75 * pts[1:]
+        mid = np.empty((2 * len(q), 3))
+        mid[0::2], mid[1::2] = q, r
+        pts = np.vstack([pts[:1], mid, pts[-1:]])
+    return pts
+
+
+def flow_paths(p, Tn):
+    """Trajets de l'air (mm, repère du boîtier) : un vers chaque AirVent latérale."""
+    ax, ay = VENT_AXIS
+
+    def vent_pts(name, local):
+        face, (a, b) = next((f, ab) for n, f, ab in VENTS if n == name)
+        T = frame(face, a, b, p)
+        return [(T @ np.array([*q, 1.0]))[:3] for q in local]
+
+    def npm(local):
+        return [(Tn @ np.array([*q, 1.0]))[:3] for q in local]
+
+    # entrée : on monte sous le capot puis on tourne dans le tube (vers l'intérieur)
+    entry = vent_pts(NEXTPM_VENT, [(ax, -14, 9.5), (ax, 12, 9.5), (ax, 26, 9.5), (ax, ay, 9.5),
+                                   (ax, ay, 3.5), (ax, ay, -5.5)])
+    L, H, HT = nextpm.L, nextpm.H, nextpm.H_TOT
+    inside = npm([(51.8, 7.0, HT - 1.0), (51.8, 7.0, H - 2.0), (49.0, 16.0, H - 6.0),
+                  (47.0, 30.0, H - 4.0), (49.0, 37.5, H + 2.0), (L - 2.0, 37.5, H + 2.6),
+                  (L + 6.0, 37.5, H + 2.6)])
+    out_local = [(ax, ay, -9.0), (ax, ay, -5.5), (ax, ay, 3.5), (ax, ay, 9.5), (ax, 26, 9.5),
+                 (ax, 12, 9.5), (ax, -14, 9.5)]
+    o = inside[-1]
+    paths = []
+    for side in ("gauche", "droite"):
+        name = f"airvent_{side}"
+        ex = vent_pts(name, out_local)
+        sx = np.sign(ex[0][0])
+        if np.sign(o[0]) == sx:   # AirVent du même côté que la sortie du NextPM
+            via = [o + [sx * 8.0, 2.0, -2.0]]
+        else:                     # on passe sous le NextPM pour rejoindre l'autre côté
+            via = [o + [-sx * 6.0, -4.0, -12.0], np.array([0.0, o[1] - 6.0, 9.0]),
+                   np.array([sx * 40.0, ex[0][1] - 8.0, 11.0])]
+        paths.append(_chaikin(entry + inside + via + ex))
+    return paths
+
+
+def add_flow_animation(glb_path, paths):
+    """Ajoute au GLB des particules (sphères) qui parcourent les trajets en
+    boucle : animation « flux ». Hors animation, elles sont à l'échelle 0
+    (invisibles), y compris pendant l'animation « ouverture »."""
+    data = Path(glb_path).read_bytes()
+    jlen = struct.unpack("<I", data[12:16])[0]
+    gltf = json.loads(data[20:20 + jlen])
+    blen = struct.unpack("<I", data[20 + jlen:24 + jlen])[0]
+    binary = bytearray(data[28 + jlen:28 + jlen + blen])
+
+    def push(arr, typ, count, mn=None, mx=None):
+        while len(binary) % 4:
+            binary.append(0)
+        off = len(binary)
+        raw = np.asarray(arr, dtype="<f4").tobytes()
+        binary.extend(raw)
+        gltf["bufferViews"].append({"buffer": 0, "byteOffset": off, "byteLength": len(raw)})
+        a = {"bufferView": len(gltf["bufferViews"]) - 1, "componentType": 5126, "count": count, "type": typ}
+        if mn is not None:
+            a["min"], a["max"] = mn, mx
+        gltf["accessors"].append(a)
+        return len(gltf["accessors"]) - 1
+
+    proto = next(i for i, n in enumerate(gltf["nodes"]) if n.get("name") == "flux_particule")
+    mesh = gltf["nodes"][proto]["mesh"]
+    roots = [i for i in gltf["scenes"][0]["nodes"] if i != proto]
+
+    T, M = FLOW_PERIOD_S, 90
+    rng = np.random.default_rng(7)
+    scale_t = push([0.0, T], "SCALAR", 2, [0.0], [T])
+    # le maillage de la particule est en mm (l'échelle 0,001 est dans la matrice du
+    # nœud modèle) : on reprend cette échelle
+    sc = float(np.linalg.norm(gltf["nodes"][proto].get("matrix", [1] + [0] * 15)[0:3]))
+    scale_v = push([[sc] * 3, [sc] * 3], "VEC3", 2)
+    samplers, channels, count = [], [], 0
+    for path in paths:
+        seg = np.linalg.norm(np.diff(path, axis=0), axis=1)
+        s = np.concatenate([[0], np.cumsum(seg)]) / seg.sum()
+
+        def at(u, jitter):
+            return np.array([np.interp(u, s, path[:, i]) for i in range(3)]) + jitter
+
+        for k in range(FLOW_PARTICLES):
+            phase = (k + rng.uniform(0, 0.6)) / FLOW_PARTICLES
+            jitter = rng.normal(0, 0.0009, 3)  # ~1 mm autour de la ligne
+            tw = (1 - phase) * T                 # instant où la particule reboucle
+            ts = sorted(set(np.round(np.linspace(0, T, M + 1), 5)) - {round(tw, 5)})
+            ts = [t for t in ts if abs(t - tw) > 2e-3] + [tw - 1e-3, tw + 1e-3]
+            ts = sorted(t for t in ts if 0 <= t <= T)
+            pos = [at(((t / T + phase) % 1.0) if t < tw else (t / T + phase - 1.0), jitter) for t in ts]
+            ti = push(ts, "SCALAR", len(ts), [min(ts)], [max(ts)])
+            pi = push(pos, "VEC3", len(ts))
+            gltf["nodes"].append({"name": f"flux_p{count:03d}", "mesh": mesh,
+                                  "translation": [float(v) for v in pos[0]], "scale": [0, 0, 0]})
+            node = len(gltf["nodes"]) - 1
+            roots.append(node)
+            samplers.append({"input": ti, "output": pi, "interpolation": "LINEAR"})
+            channels.append({"sampler": len(samplers) - 1, "target": {"node": node, "path": "translation"}})
+            samplers.append({"input": scale_t, "output": scale_v, "interpolation": "STEP"})
+            channels.append({"sampler": len(samplers) - 1, "target": {"node": node, "path": "scale"}})
+            count += 1
+    gltf["scenes"][0]["nodes"] = roots
+    gltf["animations"].append({"name": "flux", "samplers": samplers, "channels": channels})
+    while len(binary) % 4:
+        binary.append(0)
+    gltf["buffers"][0]["byteLength"] = len(binary)
+    js = json.dumps(gltf, separators=(",", ":")).encode()
+    js += b" " * (-len(js) % 4)
+    out = struct.pack("<III", 0x46546C67, 2, 12 + 8 + len(js) + 8 + len(binary))
+    out += struct.pack("<II", len(js), 0x4E4F534A) + js
+    out += struct.pack("<II", len(binary), 0x004E4942) + bytes(binary)
+    Path(glb_path).write_bytes(out)
+    return count
+
+
 def pole_centre_z(bracket_profile, r):
     """Z de l'axe du poteau calé dans la gorge en V des pattes (le plus haut
     possible sans pénétrer la patte), par dichotomie sur le profil (x, z)."""
@@ -263,9 +395,11 @@ def strap_mesh(zc, r, y):
     return trimesh.util.concatenate([m, screw])
 
 
-def paint(m, rgba):
+def paint(m, rgba, name=None):
+    """Matériau PBR ; nommé quand la page doit le retrouver (transparence du
+    mode « flux d'air »)."""
     m.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
-        baseColorFactor=rgba, metallicFactor=0.0, roughnessFactor=0.6))
+        name=name, baseColorFactor=rgba, metallicFactor=0.0, roughnessFactor=0.6))
     return m
 
 
@@ -288,7 +422,7 @@ def main():
 
     scene = trimesh.Scene()
     scene.add_geometry(paint(body, COLORS["corps"]), node_name="boitier_corps", geom_name="boitier_corps")
-    scene.add_geometry(paint(cover, COLORS["couvercle"]), node_name="boitier_couvercle", geom_name="boitier_couvercle")
+    scene.add_geometry(paint(cover, COLORS["couvercle"], "couvercle"), node_name="boitier_couvercle", geom_name="boitier_couvercle")
     scene.add_geometry(edges(body), node_name="boitier_corps_aretes", geom_name="boitier_corps_aretes")
     scene.add_geometry(edges(cover), node_name="boitier_couvercle_aretes", geom_name="boitier_couvercle_aretes")
     for name, face, (a, b) in VENTS:
@@ -297,7 +431,7 @@ def main():
             m = mesh.copy()
             m.apply_transform(T)
             key = "vent_top" if part == "capot" else "vent_ecrou"
-            scene.add_geometry(paint(m, COLORS[key]), node_name=f"{name}_{part}", geom_name=f"{name}_{part}")
+            scene.add_geometry(paint(m, COLORS[key], f"{key}_{name}"), node_name=f"{name}_{part}", geom_name=f"{name}_{part}")
             scene.add_geometry(edges(m), node_name=f"{name}_{part}_aretes", geom_name=f"{name}_{part}_aretes")
 
     # --- Pattes de fixation sur poteau WPMB-M4 (dos du boîtier, trous M4) ---
@@ -327,10 +461,12 @@ def main():
                  vent_bottom_z + NEXTPM_INSERTION - nextpm.H_TOT]
     for part, mesh in zip(("nextpm_metal", "nextpm_noir"), nextpm.build()):
         mesh.apply_transform(Tn)
-        scene.add_geometry(paint(mesh, COLORS[part]), node_name=part, geom_name=part)
+        scene.add_geometry(paint(mesh, COLORS[part], part), node_name=part, geom_name=part)
         scene.add_geometry(edges(mesh), node_name=f"{part}_aretes", geom_name=f"{part}_aretes")
         lo, hi = mesh.bounds
         print(f"{part}: X {lo[0]:.1f}..{hi[0]:.1f}  Y {lo[1]:.1f}..{hi[1]:.1f}  Z {lo[2]:.1f}..{hi[2]:.1f}")
+
+    flow = flow_paths(p, Tn)
 
     # Centre et encombrement du CAPTEUR seul (sans le poteau) : la vue 3D tourne
     # autour du capteur et les cotes ne comptent pas le décor.
@@ -365,6 +501,13 @@ def main():
     cable.apply_translation([GLAND_X, (y_in + y_out) / 2, GLAND_Z])
     scene.add_geometry(paint(cable, COLORS["cable"]), node_name="cordon_alim", geom_name="cordon_alim")
 
+    # Particule modèle du flux d'air (dupliquée par add_flow_animation)
+    dot = trimesh.creation.icosphere(subdivisions=2, radius=FLOW_PARTICLE_D / 2)
+    dot.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="flux", baseColorFactor=FLOW_COLOR, emissiveFactor=[0.0, 0.35, 1.0],
+        metallicFactor=0.0, roughnessFactor=0.4))
+    scene.add_geometry(dot, node_name="flux_particule", geom_name="flux_particule")
+
     # glTF : Y vers le haut (déjà le cas : +Y = haut du capteur posé), en mètres.
     scene.apply_translation(-centre)
     scene.apply_scale(0.001)
@@ -384,6 +527,8 @@ def main():
     out.with_suffix(".dims.json").write_text(json.dumps(dims, indent=1))
     scene.export(out)
     n = add_opening_animation(out)
+    k = add_flow_animation(out, [(np.asarray(path) - centre) * 0.001 for path in flow])
+    print(f"   flux d'air : {k} particules")
     print("->", out, f"{out.stat().st_size / 1024:.0f} Ko ; animation « ouverture » sur {n} nœuds")
     stamp_pages(out)
 

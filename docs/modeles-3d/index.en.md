@@ -12,15 +12,18 @@ View our sensors in 3D, right in your browser: **rotate** the model with your mo
 **Vertical** (small) version: Takachi WP13-18-5G enclosure, NextPM particulate sensor and external BME280 probe. Three AirVent vents: one on each side and one on the front. The NextPM is mounted under the lid, its air inlet tube fitted into the front AirVent: open the sensor to see it. The power cord enters through a cable gland at the bottom right. It is shown mounted on a Ø60 mm pole with two Takachi WPMB-M4 brackets and two hose clamps.
 
 <div class="viewer-3d">
-<model-viewer data-open-m="0.13" src="../../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb?v=53d2b9b2"
+<model-viewer data-open-m="0.13" src="../../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb?v=2b2bece0"
   alt="NebuleAir Pro, vertical version, in 3D"
   camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
-  camera-orbit="40deg 70deg 0.72m" shadow-intensity="1" exposure="1.0"
+  camera-orbit="40deg 70deg 0.72m" animation-crossfade-duration="0" shadow-intensity="1" exposure="1.0"
   ar ar-modes="webxr scene-viewer quick-look">
 </model-viewer>
 <div class="viewer-3d-open"><label>Open the sensor <input type="range" min="0" max="1" step="0.01" value="0"></label></div>
+<div class="viewer-3d-flow" hidden><label><input type="checkbox"> Show the airflow</label></div>
 <div class="viewer-3d-dims" hidden><label><input type="checkbox" checked> Show dimensions</label> <span class="viewer-3d-dims-info"></span></div>
 </div>
+
+The **"Show the airflow"** box shows the path of the air: it enters from below the front AirVent, is drawn in by the NextPM fan, then leaves the enclosure through the side AirVents. It illustrates the path; it is not a flow calculation.
 
 !!! note "Enclosure and NextPM"
     The enclosure (Takachi **WP13-18-5G**, IP68) and the NextPM sensor (Tera Sensor) are off-the-shelf parts. The ones shown here are **simplified models redrawn by AirCarto** from the manufacturers' public dimensions, for display only.

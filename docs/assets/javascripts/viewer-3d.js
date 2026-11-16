@@ -128,6 +128,10 @@ document.addEventListener("DOMContentLoaded", function () {
       mv.animationName = "ouverture";
       mv.pause();
       controls.hidden = false;
+      if (flowBox && mv.availableAnimations.indexOf("flux") !== -1) {
+        flowBox.closest(".viewer-3d-flow").hidden = false;
+        flowDots(false);
+      }
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reduce) return;
       // démarre quand le visualiseur est visible à l'écran
@@ -143,6 +147,48 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(playIntro, 50);
       }
     });
+
+    // --- Flux d'air : animation « flux » du GLB (particules), couvercle, AirVent
+    // et NextPM rendus transparents pour voir le trajet de l'air ---
+    var flowBox = box.querySelector(".viewer-3d-flow input[type=checkbox]");
+    var flowSaved = null;
+    var SEE_THROUGH = /^(couvercle|vent_top_|nextpm_)/;
+    function seeThrough(on) {
+      if (!mv.model) return;
+      if (!flowSaved) flowSaved = mv.model.materials.filter(function (m) { return SEE_THROUGH.test(m.name); })
+        .map(function (m) { return { m: m, mode: m.getAlphaMode(), c: m.pbrMetallicRoughness.baseColorFactor.slice() }; });
+      flowSaved.forEach(function (s) {
+        s.m.setAlphaMode(on ? "BLEND" : s.mode);
+        var c = s.c.slice(); if (on) c[3] = /^couvercle/.test(s.m.name) ? 0.18 : 0.35;
+        s.m.pbrMetallicRoughness.setBaseColorFactor(c);
+      });
+    }
+    function flowDots(on) {
+      // filet de sécurité : particules invisibles hors du mode flux
+      var m = mv.model && mv.model.materials.find(function (x) { return x.name === "flux"; });
+      if (!m) return;
+      m.setAlphaMode(on ? "OPAQUE" : "BLEND");
+      var c = m.pbrMetallicRoughness.baseColorFactor.slice(); c[3] = on ? 1 : 0;
+      m.pbrMetallicRoughness.setBaseColorFactor(c);
+      m.setEmissiveFactor(on ? [0, 0.35, 1] : [0, 0, 0]);
+    }
+    function setFlow(on) {
+      stopIntro();
+      if (on) {
+        range.value = 0; apply(0);
+        mv.animationName = "flux"; mv.currentTime = 0; mv.play();
+      } else {
+        // model-viewer ne change d'animation qu'en lecture : on joue un instant
+        mv.animationName = "ouverture";
+        mv.play();
+        setTimeout(function () { mv.pause(); apply(parseFloat(range.value) || 0); }, 120);
+      }
+      flowDots(on);
+      range.disabled = on;
+      controls.classList.toggle("is-disabled", on);
+      seeThrough(on);
+    }
+    if (flowBox) flowBox.addEventListener("change", function () { setFlow(flowBox.checked); });
 
     range.addEventListener("input", function () {
       stopIntro();

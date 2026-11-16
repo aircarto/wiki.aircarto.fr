@@ -141,3 +141,9 @@ model-viewer .dim-label {
   white-space: nowrap;
   pointer-events: none;
 }
+
+/* Case « Voir le flux d'air » (page Modèles 3D) */
+.md-typeset .viewer-3d-flow { padding: 0 1rem 0.4rem; font-size: 0.7rem; color: #fff; }
+.md-typeset .viewer-3d-flow[hidden] { display: none; }
+.md-typeset .viewer-3d-flow label { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+.md-typeset .viewer-3d-open.is-disabled { opacity: 0.45; }
