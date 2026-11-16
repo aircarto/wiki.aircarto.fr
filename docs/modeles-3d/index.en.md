@@ -9,7 +9,7 @@ View our sensors in 3D, right in your browser: **rotate** the model with your mo
 
 ## NebuleAir Pro
 
-**Vertical** (small) version: Takachi WP13-18-5G enclosure, NextPM particulate sensor and external BME280 probe. Three AirVent vents: one on each side and one on the front. The NextPM is mounted under the lid, its air inlet tube fitted into the front AirVent: open the sensor to see it.
+**Vertical** (small) version: Takachi WP13-18-5G enclosure, NextPM particulate sensor and external BME280 probe. Three AirVent vents: one on each side and one on the front. The NextPM is mounted under the lid, its air inlet tube fitted into the front AirVent: open the sensor to see it. It is shown mounted on a Ø60 mm pole with two Takachi WPMB-M4 brackets and two hose clamps.
 
 <div class="viewer-3d">
 <model-viewer data-open-m="0.13" src="../../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb"
@@ -19,6 +19,7 @@ View our sensors in 3D, right in your browser: **rotate** the model with your mo
   ar ar-modes="webxr scene-viewer quick-look">
 </model-viewer>
 <div class="viewer-3d-open"><label>Open the sensor <input type="range" min="0" max="1" step="0.01" value="0"></label></div>
+<div class="viewer-3d-dims" hidden><label><input type="checkbox" checked> Show dimensions</label> <span class="viewer-3d-dims-info"></span></div>
 </div>
 
 !!! note "Enclosure and NextPM"

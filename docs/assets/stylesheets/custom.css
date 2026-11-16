@@ -101,3 +101,43 @@
   accent-color: var(--md-accent-fg-color);
 }
 
+/* Cotes du boîtier dans le visualiseur 3D */
+.md-typeset .viewer-3d-dims {
+  padding: 0 1rem 0.7rem;
+  font-size: 0.7rem;
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  align-items: center;
+}
+.md-typeset .viewer-3d-dims[hidden] { display: none; }
+.md-typeset .viewer-3d-dims label { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+.md-typeset .viewer-3d-dims-info { opacity: 0.85; }
+model-viewer .dim-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+model-viewer .dim-lines line {
+  stroke: #ffffff;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
+}
+model-viewer .dim-dot {
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+model-viewer .dim-label {
+  background: rgba(20, 24, 30, 0.85);
+  color: #fff;
+  font: 600 11px/1 system-ui, sans-serif;
+  padding: 4px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+}

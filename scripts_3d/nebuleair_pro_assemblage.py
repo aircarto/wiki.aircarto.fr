@@ -66,12 +66,20 @@ def _nextpm_centered_vent_x():
 if NEXTPM_CENTERED_X:
     VENTS = [(n, f, (_nextpm_centered_vent_x(), b) if n == NEXTPM_VENT else (a, b)) for n, f, (a, b) in VENTS]
 
+# Poteau (mât) et colliers de serrage : décor de montage, hors cotes du capteur.
+POLE_D = 60.0          # diamètre du poteau (mm), courant pour un mât d'éclairage
+POLE_LEN = 420.0       # longueur du tronçon affiché (mm)
+STRAP_W = 9.0          # largeur du collier inox (mm)
+STRAP_T = 0.8          # épaisseur du collier (mm)
+
 COLORS = {
     "corps": [128, 135, 144, 255],
     "couvercle": [140, 147, 156, 255],
     "vent_top": [45, 52, 60, 255],
     "vent_ecrou": [70, 78, 88, 255],
     "patte_poteau": [128, 135, 144, 255],
+    "poteau": [150, 156, 160, 255],
+    "collier": [200, 204, 208, 255],
     "nextpm_metal": [175, 180, 186, 255],
     "nextpm_noir": [32, 34, 37, 255],
 }
@@ -188,6 +196,34 @@ def add_opening_animation(glb_path):
     return moved
 
 
+def pole_centre_z(bracket_profile, r):
+    """Z de l'axe du poteau calé dans la gorge en V des pattes (le plus haut
+    possible sans pénétrer la patte), par dichotomie sur le profil (x, z)."""
+    from shapely.geometry import Point
+    hi, lo = -12.0 + r, -12.0 - 2 * r  # hi : pénètre, lo : libre
+    for _ in range(60):
+        mid = (hi + lo) / 2
+        if Point(0, mid).buffer(r, quad_segs=64).intersection(bracket_profile).area > 1e-4:
+            hi = mid
+        else:
+            lo = mid
+    return lo
+
+
+def strap_mesh(zc, r, y):
+    """Collier de serrage : bande qui fait le tour du poteau et passe dans les
+    fentes de la patte (entraxe 13.1), avec le boîtier de vis sans fin."""
+    from shapely.geometry import MultiPoint, Point
+    hull = Point(0, zc).buffer(r, quad_segs=64).union(MultiPoint([(-6.55, -3.0), (6.55, -3.0)])).convex_hull
+    band = hull.buffer(STRAP_T, quad_segs=16).difference(hull)
+    m = trimesh.creation.extrude_polygon(band, STRAP_W)  # profil (x, z), extrudé selon Y
+    m.apply_transform(trimesh.transformations.rotation_matrix(np.pi / 2, [1, 0, 0]))
+    m.apply_translation([0, y + STRAP_W / 2, 0])
+    screw = trimesh.creation.box(extents=[14.0, STRAP_W + 3.0, 7.0])  # vis sans fin, côté opposé
+    screw.apply_translation([0, y, zc - r - STRAP_T - 3.0])
+    return trimesh.util.concatenate([m, screw])
+
+
 def paint(m, rgba):
     m.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
         baseColorFactor=rgba, metallicFactor=0.0, roughnessFactor=0.6))
@@ -247,11 +283,48 @@ def main():
         lo, hi = mesh.bounds
         print(f"{part}: X {lo[0]:.1f}..{hi[0]:.1f}  Y {lo[1]:.1f}..{hi[1]:.1f}  Z {lo[2]:.1f}..{hi[2]:.1f}")
 
+    # Centre et encombrement du CAPTEUR seul (sans le poteau) : la vue 3D tourne
+    # autour du capteur et les cotes ne comptent pas le décor.
+    centre = scene.bounds.mean(axis=0)
+    overall = scene.bounds[1] - scene.bounds[0]
+
+    # --- Poteau + 2 colliers (un par patte) ---
+    from shapely.geometry import Polygon
+    profile = Polygon([(-14, 0), (14, 0), (14, -12), (10.2, -12), (5, -7.4),
+                       (-5, -7.4), (-10.2, -12), (-14, -12)])  # = takachi_wp.bracket_wpmb_m4
+    r = POLE_D / 2
+    zc = pole_centre_z(profile, r)
+    pole = trimesh.creation.cylinder(radius=r, height=POLE_LEN, sections=96)
+    pole.apply_transform(trimesh.transformations.rotation_matrix(np.pi / 2, [1, 0, 0]))
+    pole.apply_translation([0, 0, zc])
+    pole.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        baseColorFactor=COLORS["poteau"], metallicFactor=0.5, roughnessFactor=0.45))
+    scene.add_geometry(pole, node_name="poteau", geom_name="poteau")
+    for x, y in p["mount_holes"]:
+        name = f"collier_{'bas' if y < 0 else 'haut'}"
+        m = strap_mesh(zc, r, y)
+        m.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+            baseColorFactor=COLORS["collier"], metallicFactor=0.8, roughnessFactor=0.3))
+        scene.add_geometry(m, node_name=name, geom_name=name)
+    print(f"poteau Ø{POLE_D:.0f} : axe à Z={zc:.1f} mm (dos du boîtier à Z=0)")
+
     # glTF : Y vers le haut (déjà le cas : +Y = haut du capteur posé), en mètres.
-    # On centre le modèle pour que la vue 3D tourne autour du capteur.
-    scene.apply_translation(-scene.bounds.mean(axis=0))
+    scene.apply_translation(-centre)
     scene.apply_scale(0.001)
     out = DIR / f"nebuleair_pro_{REF}_v1.glb"
+
+    # Cotes pour la page Modèles 3D (lues par viewer-3d.js) : boîtier fermé, dans
+    # le repère du GLB (mètres, modèle centré) + encombrement total en mm.
+    box_min = np.array([-p["width"] / 2, -p["length"] / 2, 0.0])
+    box_max = np.array([p["width"] / 2, p["length"] / 2, p["body_h"] + p["cover_h"]])
+    dims = {
+        "boitier": {"ref": REF,
+                    "min": ((box_min - centre) * 0.001).round(5).tolist(),
+                    "max": ((box_max - centre) * 0.001).round(5).tolist(),
+                    "mm": [p["width"], p["length"], p["body_h"] + p["cover_h"]]},
+        "encombrement_mm": overall.round(1).tolist(),
+    }
+    out.with_suffix(".dims.json").write_text(json.dumps(dims, indent=1))
     scene.export(out)
     n = add_opening_animation(out)
     print("->", out, f"{out.stat().st_size / 1024:.0f} Ko ; animation « ouverture » sur {n} nœuds")
