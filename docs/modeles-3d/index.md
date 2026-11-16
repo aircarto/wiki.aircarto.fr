@@ -39,10 +39,10 @@ Perçage du boîtier pour un AirVent : **Ø16 mm**.
 
 ## Panneau solaire et batterie
 
-Sur un site sans courant, le NebuleAir Pro est alimenté par un **panneau solaire** et une **batterie**, fixés sur le même poteau que le capteur.
+Sur un site sans courant, le NebuleAir Pro est alimenté par un **panneau solaire** et une **batterie**, fixés sur le même poteau que le capteur. Le capteur est montré à 3 m du sol, à côté d'une silhouette de 1,75 m pour l'échelle.
 
 <div class="viewer-3d">
-<model-viewer src="../assets/3d_files/kit_solaire/nebuleair_pro_kit_solaire_v1.glb?v=04f06b5e"
+<model-viewer src="../assets/3d_files/kit_solaire/nebuleair_pro_kit_solaire_v1.glb?v=147e295a"
   alt="NebuleAir Pro avec panneau solaire et batterie sur un poteau, en 3D"
   camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
   camera-orbit="40deg 78deg auto" shadow-intensity="1" exposure="1.0"

@@ -43,8 +43,11 @@ CROSS_RAIL_V = (-150.0, -520.0)                   # traverses sous le panneau (l
 BAT_W, BAT_H, BAT_D = 150.0, 270.0, 85.0
 BAT_TOP_Y = -230.0
 BAT_PLATE = 3.0                                   # platine de fixation au dos
-# --- Poteau ----------------------------------------------------------------
-POLE_Y = (-660.0, 720.0)
+# --- Poteau et échelle -----------------------------------------------------
+MOUNT_H = 3000.0                                  # hauteur du centre du capteur au-dessus du sol
+POLE_Y = (-MOUNT_H, 720.0)                        # le poteau descend jusqu'au sol
+PERSON_H = 1750.0                                 # silhouette humaine, pour l'échelle
+PERSON_POS = (430.0, -390.0)                      # (X, Z) au sol, à côté du poteau, à même distance de la caméra par défaut (40°)
 CABLE_D = 6.0
 
 COLORS = {
@@ -58,6 +61,7 @@ COLORS = {
     "connecteur": [25, 26, 28, 255],
     "inox": [200, 204, 208, 255],
     "cable": [22, 23, 25, 255],
+    "silhouette": [96, 110, 128, 255],
 }
 GRID_COLOR = [150, 165, 190, 255]
 
@@ -134,6 +138,41 @@ def panel_parts():
     segs = [[[x, y0, z], [x, y1, z]] for x in np.linspace(x0, x1, nx + 1)[1:-1]]
     segs += [[[x0, y, z], [x1, y, z]] for y in np.linspace(y0, y1, ny + 1)[1:-1]]
     return frame, cells, back, jbox, np.array(segs)
+
+
+def person(h=PERSON_H):
+    """Silhouette humaine stylisée (mannequin), debout, pieds en Y=0, face +Z."""
+    k = h / 1750.0
+
+    def capsule(a, b, r):
+        a, b = np.array(a, float) * k, np.array(b, float) * k
+        m = trimesh.creation.capsule(height=np.linalg.norm(b - a), radius=r * k, count=[16, 16])
+        m.apply_transform(trimesh.geometry.align_vectors([0, 0, 1], b - a))
+        m.apply_translation((a + b) / 2)
+        return m
+
+    def ellipsoid(c, radii):
+        m = trimesh.creation.icosphere(subdivisions=3, radius=1.0)
+        m.apply_scale(np.array(radii) * k)
+        m.apply_translation(np.array(c) * k)
+        return m
+
+    parts = [
+        ellipsoid([0, 1640, 0], [92, 115, 100]),               # tête
+        capsule([0, 1480, 0], [0, 1540, 0], 45),               # cou
+        ellipsoid([0, 1260, 0], [185, 230, 105]),              # buste
+        ellipsoid([0, 1000, 0], [165, 120, 100]),              # bassin
+    ]
+    for sx in (-1, 1):
+        parts += [
+            capsule([sx * 195, 1420, 0], [sx * 230, 1130, 5], 48),     # bras
+            capsule([sx * 230, 1130, 5], [sx * 250, 870, 25], 40),     # avant-bras
+            ellipsoid([sx * 252, 800, 30], [32, 60, 45]),              # main
+            capsule([sx * 95, 960, 0], [sx * 100, 500, 0], 72),        # cuisse
+            capsule([sx * 100, 500, 0], [sx * 105, 75, -5], 55),       # jambe
+            ellipsoid([sx * 108, 38, 45], [50, 38, 115]),              # pied
+        ]
+    return trimesh.util.concatenate(parts)
 
 
 def main():
@@ -236,16 +275,21 @@ def main():
            (side, bat_y0 - 40, zc + 10), (xs, bat_y0 - 60, zconn), (xs, bat_y0 - 14, zconn)]
     add(scene, "cable_panneau_batterie", tube(pts, CABLE_D), "cable", edges=False)
 
-    # Centre de la vue : tout sauf le poteau
-    lo = np.minimum(sensor_bounds[0], [-PANEL_W / 2, bat_y0 - 70, zc - r])
-    hi = np.maximum(sensor_bounds[1], [PANEL_W / 2, hinge[1] + 60, z_end + 60])
+    # --- Silhouette humaine au pied du poteau, pour l'échelle ----------------
+    man = person()
+    man.apply_translation([PERSON_POS[0], -MOUNT_H, PERSON_POS[1]])
+    add(scene, "silhouette", man, "silhouette", edges=False, rough=0.8)
+
+    # Centre de la vue : l'ensemble, du sol au haut du panneau
+    lo = np.minimum(sensor_bounds[0], [-PANEL_W / 2, -MOUNT_H, zc - r])
+    hi = np.maximum(sensor_bounds[1], [PERSON_POS[0] + 300, hinge[1] + 60, z_end + 60])
     centre = (lo + hi) / 2
     scene.apply_translation(-centre)
     scene.apply_scale(0.001)
     OUT.mkdir(parents=True, exist_ok=True)
     out = OUT / "nebuleair_pro_kit_solaire_v1.glb"
     scene.export(out)
-    print(f"encombrement (hors poteau) : {(hi - lo).round(0)} mm")
+    print(f"ensemble : {(hi - lo).round(0)} mm ; capteur à {MOUNT_H / 1000:.1f} m, silhouette {PERSON_H / 1000:.2f} m")
     print("->", out, f"{out.stat().st_size / 1024:.0f} Ko")
     na.stamp_pages(out)
 
