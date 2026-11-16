@@ -97,7 +97,7 @@
 }
 .md-typeset .viewer-3d-open input[type=range] {
   flex: 1;
-  max-width: 320px;
+  min-width: 0;
   accent-color: var(--md-accent-fg-color);
 }
 

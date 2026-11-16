@@ -16,7 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     range.addEventListener("input", function () {
       mv.autoRotate = false;
-      mv.currentTime = parseFloat(range.value) * (mv.duration || 1);
+      // la fin exacte de l'animation est ramenée à 0 par model-viewer : on s'arrête juste avant
+      var d = mv.duration || 1;
+      var v = parseFloat(range.value);
+      mv.currentTime = Math.min(v * d, d - 0.001);
+      // la caméra suit l'ouverture : elle vise le milieu entre fond et couvercle
+      var open = parseFloat(mv.dataset.openM || "0");
+      if (open) mv.cameraTarget = "0m 0m " + (v * open / 2).toFixed(4) + "m";
     });
   });
 });

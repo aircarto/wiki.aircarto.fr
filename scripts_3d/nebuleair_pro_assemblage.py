@@ -20,6 +20,7 @@ from pathlib import Path
 import numpy as np
 import trimesh
 
+import nextpm
 from takachi_wp import BOXES, build, cyl, diff
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -44,11 +45,22 @@ VENTS = [
     ("airvent_avant", "avant", (0.0, 40.0)),
 ]
 
+# NextPM : fixé sous le couvercle, tube d'entrée d'air emboîté dans l'AirVent
+# avant (tube Ø11 dans l'alésage Ø~12.5 de l'AirVent). Rotation autour de Z
+# (degrés) choisie pour que le capteur tienne dans le boîtier sans toucher les
+# écrous des AirVent latérales : À CONFIRMER sur le capteur réel.
+NEXTPM_VENT = "airvent_avant"
+NEXTPM_ROT_DEG = 180.0
+NEXTPM_INSERTION = 3.0  # mm de tube engagés dans l'AirVent
+NEXTPM_TUBE_XY = (51.8, 7.0)  # axe du tube dans le repère de nextpm.py
+
 COLORS = {
     "corps": [128, 135, 144, 255],
     "couvercle": [140, 147, 156, 255],
     "vent_top": [45, 52, 60, 255],
     "vent_ecrou": [70, 78, 88, 255],
+    "nextpm_metal": [175, 180, 186, 255],
+    "nextpm_noir": [32, 34, 37, 255],
 }
 
 
@@ -103,8 +115,8 @@ def edges(m):
 
 # Animation « ouverture » : le couvercle et ce qui y est fixé s'éloignent du fond
 # (axe +Z, face avant). Pilotée par le curseur de la page Modèles 3D.
-OPEN_DISTANCE_M = 0.07
-OPEN_PREFIXES = ("boitier_couvercle", "airvent_avant")
+OPEN_DISTANCE_M = 0.13
+OPEN_PREFIXES = ("boitier_couvercle", "airvent_avant", "nextpm")
 
 
 def add_opening_animation(glb_path):
@@ -188,6 +200,22 @@ def main():
             key = "vent_top" if part == "capot" else "vent_ecrou"
             scene.add_geometry(paint(m, COLORS[key]), node_name=f"{name}_{part}", geom_name=f"{name}_{part}")
             scene.add_geometry(edges(m), node_name=f"{name}_{part}_aretes", geom_name=f"{name}_{part}_aretes")
+
+    # --- NextPM sous le couvercle ---
+    vname, vface, (va, vb) = next(v for v in VENTS if v[0] == NEXTPM_VENT)
+    Tv = frame(vface, va, vb, p)
+    axis_w = Tv[:3, :3] @ np.array([*VENT_AXIS, 0.0]) + Tv[:3, 3]  # axe de l'AirVent
+    vent_bottom_z = (Tv @ np.array([*VENT_AXIS, -5.5, 1.0]))[2]      # bas du filetage
+    Tn = trimesh.transformations.rotation_matrix(np.radians(NEXTPM_ROT_DEG), [0, 0, 1])
+    tube_after_rot = Tn[:3, :3] @ np.array([*NEXTPM_TUBE_XY, 0.0])
+    Tn[:3, 3] = [axis_w[0] - tube_after_rot[0], axis_w[1] - tube_after_rot[1],
+                 vent_bottom_z + NEXTPM_INSERTION - nextpm.H_TOT]
+    for part, mesh in zip(("nextpm_metal", "nextpm_noir"), nextpm.build()):
+        mesh.apply_transform(Tn)
+        scene.add_geometry(paint(mesh, COLORS[part]), node_name=part, geom_name=part)
+        scene.add_geometry(edges(mesh), node_name=f"{part}_aretes", geom_name=f"{part}_aretes")
+        lo, hi = mesh.bounds
+        print(f"{part}: X {lo[0]:.1f}..{hi[0]:.1f}  Y {lo[1]:.1f}..{hi[1]:.1f}  Z {lo[2]:.1f}..{hi[2]:.1f}")
 
     # glTF : Y vers le haut (déjà le cas : +Y = haut du capteur posé), en mètres.
     # On centre le modèle pour que la vue 3D tourne autour du capteur.

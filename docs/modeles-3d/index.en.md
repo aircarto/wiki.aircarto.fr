@@ -9,20 +9,20 @@ View our sensors in 3D, right in your browser: **rotate** the model with your mo
 
 ## NebuleAir Pro
 
-**Vertical** (small) version: Takachi WP13-18-5G enclosure, NextPM particulate sensor and external BME280 probe. Three AirVent vents: one on each side and one on the front.
+**Vertical** (small) version: Takachi WP13-18-5G enclosure, NextPM particulate sensor and external BME280 probe. Three AirVent vents: one on each side and one on the front. The NextPM is mounted under the lid, its air inlet tube fitted into the front AirVent: open the sensor to see it.
 
 <div class="viewer-3d">
-<model-viewer src="../../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb"
+<model-viewer data-open-m="0.13" src="../../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb"
   alt="NebuleAir Pro, vertical version, in 3D"
   camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
-  camera-orbit="35deg 70deg 0.58m" shadow-intensity="1" exposure="1.0"
+  camera-orbit="40deg 70deg 0.72m" shadow-intensity="1" exposure="1.0"
   ar ar-modes="webxr scene-viewer quick-look">
 </model-viewer>
 <div class="viewer-3d-open"><label>Open the sensor <input type="range" min="0" max="1" step="0.01" value="0"></label></div>
 </div>
 
-!!! note "Enclosure"
-    The enclosure is an off-the-shelf part (Takachi **WP13-18-5G**, IP68). The one shown here is a **simplified model redrawn by AirCarto** from the manufacturer's public dimensions, for display only: the enclosure itself is bought from Takachi.
+!!! note "Enclosure and NextPM"
+    The enclosure (Takachi **WP13-18-5G**, IP68) and the NextPM sensor (Tera Sensor) are off-the-shelf parts. The ones shown here are **simplified models redrawn by AirCarto** from the manufacturers' public dimensions, for display only.
 
 ### Files to print
 

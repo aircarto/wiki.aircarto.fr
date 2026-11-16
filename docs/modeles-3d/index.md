@@ -9,20 +9,20 @@ Visualisez nos capteurs en 3D, directement dans le navigateur : **faites tourner
 
 ## NebuleAir Pro
 
-Version **verticale** (petite) : boîtier Takachi WP13-18-5G, capteur de particules NextPM et sonde BME280 externe. Trois aérations AirVent : une sur chaque côté et une sur la face avant.
+Version **verticale** (petite) : boîtier Takachi WP13-18-5G, capteur de particules NextPM et sonde BME280 externe. Trois aérations AirVent : une sur chaque côté et une sur la face avant. Le NextPM est fixé sous le couvercle, son tube d'entrée d'air emboîté dans l'AirVent avant : ouvrez le capteur pour le voir.
 
 <div class="viewer-3d">
-<model-viewer src="../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb"
+<model-viewer data-open-m="0.13" src="../assets/3d_files/nebuleair_pro/nebuleair_pro_WP13-18-5G_v1.glb"
   alt="NebuleAir Pro, version verticale, en 3D"
   camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000"
-  camera-orbit="35deg 70deg 0.58m" shadow-intensity="1" exposure="1.0"
+  camera-orbit="40deg 70deg 0.72m" shadow-intensity="1" exposure="1.0"
   ar ar-modes="webxr scene-viewer quick-look">
 </model-viewer>
 <div class="viewer-3d-open"><label>Ouvrir le capteur <input type="range" min="0" max="1" step="0.01" value="0"></label></div>
 </div>
 
-!!! note "Boîtier"
-    Le boîtier est un modèle du commerce (Takachi **WP13-18-5G**, IP68). Celui affiché ici est un **modèle simplifié redessiné par AirCarto** à partir des cotes publiques du fabricant, pour la visualisation : le boîtier s'achète chez Takachi.
+!!! note "Boîtier et NextPM"
+    Le boîtier (Takachi **WP13-18-5G**, IP68) et le capteur NextPM (Tera Sensor) sont des pièces du commerce. Ceux affichés ici sont des **modèles simplifiés redessinés par AirCarto** à partir des cotes publiques des fabricants, pour la visualisation.
 
 ### Fichiers à imprimer
 
